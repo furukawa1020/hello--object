@@ -16,7 +16,7 @@ const HistoryPanel = ({ history }) => {
               {item.error ? (
                 <span className="error-text">! {item.error}</span>
               ) : (
-                <span className="result-text">#=> {JSON.stringify(item.result)}</span>
+                <span className="result-text">#={"=>"} {JSON.stringify(item.result)}</span>
               )}
             </div>
           </div>
