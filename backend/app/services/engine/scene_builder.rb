@@ -54,5 +54,9 @@ module Engine
     def pedestal(id, name, description, **vars)
       object(:pedestal, id, name, description, **vars)
     end
+
+    def world_gate(id, name, description, **vars)
+      object(:world_gate, id, name, description, **vars)
+    end
   end
 end
