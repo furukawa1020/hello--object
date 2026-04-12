@@ -5,13 +5,17 @@ const NaviGuide = ({ currentObject, lastResult, lastError }) => {
 
   useEffect(() => {
     if (lastError) {
-      if (lastError.includes("NoMethodError")) {
+      if (lastError.includes("呪印") || lastError.includes("呪い")) {
+        setMessage("この扉の呪いは、通常の『鍵』や『魔法』では太刀打ちできないようです。...ふむ、ならば『扉の定義』そのものを書き換えて、呪いを無効化してみてはどうでしょう？");
+      } else if (lastError.includes("NoMethodError")) {
         setMessage("その言葉はこのオブジェクトには通じないようです。サイドパネルの『Try』リストを見てみてください。");
       } else {
         setMessage("何か問題が起きたようです。コードをもう一度確認してみましょう。");
       }
     } else if (currentObject) {
-      if (currentObject.class_name === 'Chest' && currentObject.variables.locked) {
+      if (currentObject.variables.cursed) {
+        setMessage("そのオブジェクトには、強力な『論理の呪い』がかかっています。右下の『Class Schematic』を見て、プログラムの仕組み（定義）を調べてみてください。");
+      } else if (currentObject.class_name === 'Chest' && currentObject.variables.locked) {
         setMessage("このチェストは鍵がかかっていますね。まずは『鍵』を探して、それを使ってみてはどうでしょうか？");
       } else if (currentObject.class_name === 'Door' && currentObject.variables.locked) {
         setMessage("扉に鍵がかかっています。『door.unlock』と唱えれば、道が開けるかもしれません。");
