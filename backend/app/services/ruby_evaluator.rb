@@ -16,9 +16,20 @@ class RubyEvaluator
         objects: WorldManager.all_objects.map(&:state)
       }
     rescue StandardError, ScriptError => e
+      friendly_msg = case e
+                    when NoMethodError
+                      # Extract the method name if possible
+                      method_name = e.message.match(/undefined method `(.+)' for/)&.[](1)
+                      "『#{method_name || 'その言葉'}』は、このオブジェクトには通じないようです。右側の「Actions」ボタンを参考にしてみてください。"
+                    when NameError
+                      "『#{e.name}』というオブジェクトは見つかりませんでした。綴りが合っているか確認してみてください。"
+                    else
+                      e.message
+                    end
+
       {
         success: false,
-        error: e.message,
+        error: friendly_msg,
         error_type: e.class.name,
         events: Engine::EventRecorder.collect,
         objects: WorldManager.all_objects.map(&:state)
