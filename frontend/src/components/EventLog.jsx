@@ -32,6 +32,9 @@ const EventLog = ({ events }) => {
             <div key={i} className="event-entry" style={{ '--ev-color': meta.color }}>
               <span className="event-icon">{meta.icon}</span>
               <span className="event-text" style={{ color: meta.color }}>{meta.text}</span>
+              {ev.data?.choice && (
+                <span className="event-choice-badge">{ev.data.choice}</span>
+              )}
               {ev.data?.object_id && (
                 <span className="event-object-id">[ {ev.data.object_id} ]</span>
               )}

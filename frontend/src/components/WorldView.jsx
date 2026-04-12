@@ -58,9 +58,18 @@ const PedestalSprite = ({ obj }) => (
   </div>
 );
 
+const WorldGateSprite = ({ obj }) => (
+  <div className={`world-gate-sprite ${obj.variables.authorized ? 'gate-authorized' : ''}`} style={{ '--integrity': `${obj.variables.integrity}%` }}>
+    <div className="gate-bars" />
+    <div className="gate-integrity-bar" />
+    {obj.variables.authorized && <div className="gate-auth-glow" />}
+  </div>
+);
+
 const SPRITES = {
   Door: DoorSprite, Chest: ChestSprite, Key: KeySprite,
   Tome: TomeSprite, Npc: NpcSprite, Mirror: MirrorSprite, Pedestal: PedestalSprite,
+  WorldGate: WorldGateSprite,
 };
 
 // ── Hover tooltip ─────────────────────────────────────────
@@ -84,6 +93,7 @@ const isCompleted = (obj) => {
   if (obj.class_name === 'Npc')     return (v.talked_count || 0) > 0;
   if (obj.class_name === 'Mirror')  return (v.reflection_count || 0) > 0;
   if (obj.class_name === 'Pedestal') return v.activated;
+  if (obj.class_name === 'WorldGate') return v.open;
   return false;
 };
 
