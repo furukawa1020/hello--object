@@ -148,6 +148,13 @@ function App() {
     setSelectedObject(obj);
   };
 
+  const handleExportJourney = () => {
+    const script = history.map(h => `# ${h.timestamp}\n${h.code}${h.error ? ' # Error: ' + h.error : ''}`).reverse().join('\n\n');
+    const header = `# hello, object Journey Export\n# Executions: ${stats.executions}\n# Events: ${stats.events}\n\n`;
+    navigator.clipboard.writeText(header + script);
+    alert('ジャーニーをクリップボードにコピーしました！');
+  };
+
   // ── Keyboard shortcut helpers ─────────────────────────
   const getAlias = (obj) => {
     const map = {
@@ -156,7 +163,8 @@ function App() {
       cursed_door: 'cursed_door', tome_002: 'forbidden_tome',
       warlock_001: 'warlock', pedestal_001: 'pedestal',
       tome_sealed: 'tome_sealed', mirror_002: 'mirror_002',
-      librarian_001: 'librarian',
+      librarian_001: 'librarian', gate_exit: 'gate',
+      gatekeeper_001: 'gatekeeper',
     };
     return map[obj?.id] || obj?.id;
   };
@@ -204,6 +212,7 @@ function App() {
         </div>
         <StatsBar stats={statsDisplay} />
         <div className="header-actions">
+          <button onClick={handleExportJourney} className="export-btn">⎙ Export Journey</button>
           <button onClick={handleReset} className="reset-btn">⟳ Reset</button>
           <div className="status-badge">
             <span className="status-dot" />
