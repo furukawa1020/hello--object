@@ -14,6 +14,10 @@ class WorldManager
       
       c.add_item(k)
     end
+
+    @world.scene :the_sealed_chamber do
+      door :cursed_door, '呪印の扉', '禍々しいオーラを放つ扉。通常の手段（鍵など）では開かない。', locked: true, cursed: true
+    end
   end
 
   def self.get_object(name)
@@ -22,6 +26,7 @@ class WorldManager
          when 'door' then 'door_001'
          when 'chest' then 'chest_001'
          when 'key' then 'key_001'
+         when 'cursed_door' then 'cursed_door'
          else name.to_s
          end
     @world.find_object(id)
@@ -36,7 +41,8 @@ class WorldManager
     {
       'door' => get_object('door'),
       'chest' => get_object('chest'),
-      'key' => get_object('key')
+      'key' => get_object('key'),
+      'cursed_door' => get_object('cursed_door')
     }
   end
 
