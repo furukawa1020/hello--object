@@ -12,6 +12,7 @@ export const SCENE_MEMBERSHIP = {
   tome_002:      'the_sealed_chamber',
   warlock_001:   'the_sealed_chamber',
   pedestal_001:  'the_sealed_chamber',
+  tome_sealed:   'the_sealed_chamber',
   tome_003:      'the_archive',
   tome_004:      'the_archive',
   tome_005:      'the_archive',

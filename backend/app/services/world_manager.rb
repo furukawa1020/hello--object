@@ -3,6 +3,7 @@ class WorldManager
 
   def self.initialize_world
     @world.clear
+    Engine::EventRecorder.world = @world
 
     # ═══════════════════════════════════════════════════
     # Scene 1: The First Room — 入門
@@ -12,18 +13,18 @@ class WorldManager
            '錆びついた蝶番が軋む重厚な木製の扉。なにかが向こう側に待っている。',
            locked: true, open: false
 
-      k = key :key_001, '黄金の鍵', '眩い光を放つ古い鍵。チェストのものと思われる。'
+      k = key :key_001, '黄金の鍵', '眩い光を放つ古い鍵。チェストの錠前に合いそうだ。'
       c = chest :chest_001, '鉄のチェスト', '重厚な鉄で作られたチェスト。イニシャルが刻まれている。'
       c.add_item(k)
 
       tome :tome_001, '古文書「世界の法則」',
-           'ほこりをかぶった羊皮紙の束。文字が浮かび上がっている。'
+           'ほこりをかぶった羊皮紙の束。「すべてのオブジェクトはクラスのインスタンスである」と書かれている。'
 
       npc :sage_001, '石像の賢者',
           '台座に腰かける老人の石像。しかし、目が光っている気がする。'
 
       object :mirror, :mirror_001, '知識の鏡',
-             'なにかを映すと、その本質を教えてくれるとされる古い鏡。`mirror.reflect(オブジェクト)` で使う。'
+             '磨き上げられた鏡。`mirror.reflect(オブジェクト)` で対象の本質を映し出す。'
     end
 
     # ═══════════════════════════════════════════════════
@@ -31,11 +32,11 @@ class WorldManager
     # ═══════════════════════════════════════════════════
     @world.scene :the_sealed_chamber do
       door :cursed_door, '呪印の扉',
-           '禍々しいオーラを放つ扉。刻まれた呪印が、すべての鍵を拒絶する。',
+           '禍々しいオーラを放つ扉。刻まれた呪印が、あらゆる鍵を拒絶する。',
            locked: true, cursed: true
 
       tome :tome_002, '禁断の書',
-           '焦げた表紙の本。「クラスを再オープンせよ」と書かれている。'
+           '焦げた表紙の本。ページには「class Door を再オープンし、呪いを書き換えよ」とある。'
 
       npc :warlock_001, '術師の亡霊',
           'かつてこの扉に呪いをかけた術師の残留思念。',
@@ -43,63 +44,86 @@ class WorldManager
             "ふふ…その扉は永遠に開かぬ。",
             "…あら、あなたはコードを書けるのか。",
             "Rubyでは class は常に再オープンできる。それが呪いの抜け穴だ。",
-            "`class Door; def unlock; @cursed=false; @locked=false; end; end` を試してみるがいい。"
+            "`class Door; def unlock; @cursed=false; @locked=false; end; end` を試してみるがいい。",
+            "呪いを解いた後、`cursed_door.unlock` → `cursed_door.open` の順で唱えよ。"
           ]
 
+      # Pedestal reveals the 'tome_sealed' (secret guide) when activated with key
       object :pedestal, :pedestal_001, '試練の台座',
-             '魔法の台座。正しいオブジェクトを置くと何か起こる。',
-             accepts: 'Key', reward_message: '黄金の鍵を台座に置くと、呪印の一部が薄れた…！しかし扉はまだ開かない。'
+             '台座に刻まれた文字：「正しき鍵を捧げよ。さすれば知恵が授けられん。」',
+             accepts: 'Key', reveals: 'tome_sealed',
+             reward_message: '黄金の鍵を台座に捧げた。光が部屋を満たす…'
     end
+
+    # ═══════════════════════════════════════════════════
+    # Hidden objects — revealed by puzzle chains
+    # ═══════════════════════════════════════════════════
+    secret_tome = Tome.new(
+      id: 'tome_sealed',
+      name: '封印されていた書',
+      description: '台座の光が解き放った秘密の書。クリアへの手順が完全に記されている。'
+    )
+    # Override knowledge_lines for specific content
+    secret_tome.instance_variable_set(:@knowledge, [
+      "【手順1】`class Door` を再オープンして `unlock` を書き換える",
+      "【手順2】`cursed_door.unlock` で鍵を解除する",
+      "【手順3】`cursed_door.open` で扉を開ける",
+      "コード例：class Door; def unlock; @cursed=false; @locked=false; '解呪完了'; end; end"
+    ])
+    @world.hide_object(secret_tome)
 
     # ═══════════════════════════════════════════════════
     # Scene 3: The Archive — 深い知識（第三の間）
     # ═══════════════════════════════════════════════════
     @world.scene :the_archive do
       tome :tome_003, '「継承」の書',
-           '「子は親の知識を引き継ぐ。しかし自らの定義を持つこともできる。」'
+           'クラスの家系図について。`Door.ancestors` を試してみよ。'
 
       tome :tome_004, '「状態」の記録',
-           '「@ で始まる変数はインスタンス変数だ。オブジェクト固有の状態を保存する。」'
+           '`@` で始まる変数はインスタンス変数。`door.instance_variables` で一覧を見よ。'
 
       tome :tome_005, '「動的性」の証',
-           '「Rubyは実行中に自らを書き換える。これをモンキーパッチという。」'
+           'Rubyは実行中に自らを書き換える。これをモンキーパッチという。class を再オープンすれば実証できる。'
 
       object :mirror, :mirror_002, '記録の鏡',
-             '世界の記録を映す鏡。どんなオブジェクトでも `mirror_002.reflect(obj)` で詳細を調べられる。'
+             '世界の真実を映す鏡。`mirror_002.reflect(任意のオブジェクト)` で詳細を調べられる。'
 
       npc :librarian_001, '図書館の守護者',
           '古い書物に囲まれた沈黙の番人。',
           lines: [
-            "ここは知識の間です。书籍に記された真理があなたを導くでしょう。",
-            "tome_003.read で継承の記録を。tome_004.read で状態の記録を読めます。",
+            "ここは知識の間です。書籍に記された真理があなたを導くでしょう。",
+            "tome_003.read → tome_004.read → tome_005.read の順に読むことをお勧めします。",
             "`1.class` → Integer。`Integer.superclass` → Numeric。これが継承の連鎖です。",
-            "すべての Ruby クラスは BasicObject から始まります。`BasicObject.ancestors` を試してみてください。"
+            "`Door.instance_methods(false)` で Door 独自のメソッド一覧を見られます。",
+            "すべての Ruby クラスは BasicObject から始まります。`Door.ancestors` を試してみてください。"
           ]
     end
   end
+
+  ALIASES = {
+    'door'            => 'door_001',
+    'chest'           => 'chest_001',
+    'key'             => 'key_001',
+    'tome'            => 'tome_001',
+    'sage'            => 'sage_001',
+    'mirror'          => 'mirror_001',
+    'cursed_door'     => 'cursed_door',
+    'forbidden_tome'  => 'tome_002',
+    'warlock'         => 'warlock_001',
+    'pedestal'        => 'pedestal_001',
+    'tome_sealed'     => 'tome_sealed',
+    'secret_tome'     => 'tome_sealed',
+    'tome_003'        => 'tome_003',
+    'tome_004'        => 'tome_004',
+    'tome_005'        => 'tome_005',
+    'mirror_002'      => 'mirror_002',
+    'librarian'       => 'librarian_001',
+  }.freeze
 
   def self.get_object(name)
     id = ALIASES.fetch(name.to_s, name.to_s)
     @world.find_object(id)
   end
-
-  ALIASES = {
-    'door'           => 'door_001',
-    'chest'          => 'chest_001',
-    'key'            => 'key_001',
-    'tome'           => 'tome_001',
-    'sage'           => 'sage_001',
-    'mirror'         => 'mirror_001',
-    'cursed_door'    => 'cursed_door',
-    'forbidden_tome' => 'tome_002',
-    'warlock'        => 'warlock_001',
-    'pedestal'       => 'pedestal_001',
-    'tome_003'       => 'tome_003',
-    'tome_004'       => 'tome_004',
-    'tome_005'       => 'tome_005',
-    'mirror_002'     => 'mirror_002',
-    'librarian'      => 'librarian_001',
-  }.freeze
 
   def self.all_objects
     @world.objects.values
@@ -111,11 +135,11 @@ class WorldManager
       obj = @world.find_object(obj_id)
       result[alias_name] = obj if obj
     end
+    # Also expose archive tomes by alias
     result.compact
   end
 
   def self.reset
-    # Reload model classes so monkey-patches are removed
     [Door, Chest, Key, Tome, Npc, Mirror, Pedestal].each do |klass|
       load Rails.root.join('app', 'models', "#{klass.name.underscore}.rb").to_s rescue nil
     end
