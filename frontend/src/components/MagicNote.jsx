@@ -49,7 +49,7 @@ const MagicNote = ({ onExecute, selectedObject }) => {
             }
           }}
         />
-        <button type="submit" className="button-primary">Execute</button>
+        <button type="submit" className="button-tactical">Execute</button>
       </form>
     </div>
   );
