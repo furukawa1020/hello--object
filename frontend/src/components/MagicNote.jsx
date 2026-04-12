@@ -22,7 +22,7 @@ const MagicNote = ({ onExecute, selectedObject }) => {
   };
 
   return (
-    <div className="magic-note glass-panel">
+    <div className="magic-note tactical-panel">
       <div className="note-header">
         <span>Magic Note</span>
         {selectedObject && (
