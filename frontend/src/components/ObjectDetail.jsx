@@ -44,6 +44,14 @@ const ObjectDetail = ({ object, onAction, objects }) => {
     ]
   };
 
+  const getSchematic = (className) => {
+    const schematics = {
+      Door: `class Door\n  def unlock\n    if @cursed\n      raise "Locked by curse"\n    end\n    @locked = false\n  end\nend`,
+      Chest: `class Chest\n  def unlock(key)\n    if key.power > 0\n      @locked = false\n    end\n  end\nend`
+    };
+    return schematics[className] || "# No schematic available";
+  };
+
   return (
     <div className="object-detail tactical-panel">
       <div className="detail-header">
@@ -71,6 +79,13 @@ const ObjectDetail = ({ object, onAction, objects }) => {
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="schematic-section">
+        <h4>Class Schematic <span className="mono-label">.rb source</span></h4>
+        <pre className="schematic-code mono">
+          {getSchematic(object.class_name)}
+        </pre>
       </div>
 
       <div className="state-section">
