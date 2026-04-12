@@ -4,12 +4,14 @@ import MagicNote from './components/MagicNote';
 import WorldView from './components/WorldView';
 import ObjectDetail from './components/ObjectDetail';
 import HistoryPanel from './components/HistoryPanel';
+import NaviGuide from './components/NaviGuide';
 
 function App() {
   const [objects, setObjects] = useState([]);
   const [selectedObject, setSelectedObject] = useState(null);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [lastExecution, setLastExecution] = useState({ result: null, error: null });
 
   useEffect(() => {
     fetchState();
@@ -38,6 +40,8 @@ function App() {
       });
       const data = await response.json();
       
+      setLastExecution({ result: data.result, error: data.error });
+      
       setHistory(prev => [{
         code,
         result: data.result,
@@ -54,6 +58,7 @@ function App() {
       }
     } catch (error) {
       console.error('Execution failed:', error);
+      setLastExecution({ result: null, error: 'Network Error: Cannot connect to server.' });
     }
   };
 
@@ -82,6 +87,12 @@ function App() {
           <HistoryPanel history={history} />
         </aside>
       </main>
+
+      <NaviGuide 
+        currentObject={selectedObject}
+        lastResult={lastExecution.result}
+        lastError={lastExecution.error}
+      />
     </div>
   );
 }
