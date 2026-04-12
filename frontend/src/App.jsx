@@ -12,11 +12,13 @@ function App() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lastExecution, setLastExecution] = useState({ result: null, error: null });
+  const [actionCode, setActionCode] = useState("");
 
   useEffect(() => {
     fetchState();
   }, []);
 
+  // ... (fetchState and handleExecute remain the same)
   const fetchState = async () => {
     try {
       const response = await fetch('http://localhost:3000/state');
@@ -41,6 +43,7 @@ function App() {
       const data = await response.json();
       
       setLastExecution({ result: data.result, error: data.error });
+      setActionCode(""); // Clear action code after execute
       
       setHistory(prev => [{
         code,
@@ -79,11 +82,16 @@ function App() {
           <MagicNote 
             onExecute={handleExecute} 
             selectedObject={selectedObject}
+            initialCode={actionCode}
           />
         </div>
 
         <aside className="right-sidebar">
-          <ObjectDetail object={selectedObject} />
+          <ObjectDetail 
+            object={selectedObject} 
+            onAction={setActionCode}
+            objects={objects}
+          />
           <HistoryPanel history={history} />
         </aside>
       </main>
