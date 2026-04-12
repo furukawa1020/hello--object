@@ -1778,3 +1778,204 @@ kbd {
   50%  { box-shadow: 0 0 12px 4px var(--accent-color); }
   100% { box-shadow: none; }
 }
+
+/* ============================================================
+   Phase 12: Hover Tooltip
+   ============================================================ */
+.object-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0a0d12;
+  border: 1px solid var(--accent-color);
+  padding: 10px 14px;
+  width: 220px;
+  z-index: 500;
+  pointer-events: none;
+  animation: tooltip-appear 0.15s ease;
+  white-space: normal;
+}
+
+.object-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: var(--accent-color);
+}
+
+@keyframes tooltip-appear {
+  from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.tooltip-name {
+  font-size: 12px;
+  color: var(--accent-color);
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+.tooltip-class {
+  font-size: 9px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.tooltip-desc {
+  font-size: 11px;
+  color: var(--text-primary);
+  line-height: 1.5;
+  opacity: 0.8;
+}
+
+.tooltip-warning {
+  margin-top: 6px;
+  font-size: 10px;
+  color: #b060ff;
+  border-top: 1px solid rgba(155, 14, 255, 0.3);
+  padding-top: 4px;
+}
+
+/* ============================================================
+   Completion checkmarks
+   ============================================================ */
+.completion-check {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 16px;
+  height: 16px;
+  background: #3aff8a;
+  color: #000;
+  font-size: 9px;
+  font-weight: 900;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  box-shadow: 0 0 6px #3aff8a;
+}
+
+.game-object.completed .object-label {
+  color: var(--text-secondary);
+  opacity: 0.5;
+}
+
+/* ============================================================
+   HistoryPanel rerun button & multi-line
+   ============================================================ */
+.history-rerun-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0 4px;
+  opacity: 0.4;
+  transition: opacity 0.2s, color 0.2s;
+  margin-left: auto;
+  line-height: 1;
+}
+
+.history-rerun-btn:hover {
+  opacity: 1;
+  color: var(--accent-color);
+}
+
+.result-multiline {
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 4px 0 0;
+  white-space: pre-wrap;
+  background: rgba(0,0,0,0.25);
+  padding: 8px;
+  border-left: 2px solid var(--border-color);
+  overflow-x: auto;
+  color: #8aff80;
+}
+
+/* ============================================================
+   World keyboard hints bar
+   ============================================================ */
+.world-kb-hints {
+  padding: 5px 12px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  gap: 12px;
+  font-size: 9px;
+  color: var(--text-secondary);
+  opacity: 0.4;
+  flex-shrink: 0;
+  background: rgba(0,0,0,0.15);
+}
+
+/* ============================================================
+   Mirror target label & Pedestal item icon
+   ============================================================ */
+.mirror-target-label {
+  position: absolute;
+  bottom: 2px;
+  left: 0; right: 0;
+  font-size: 7px;
+  text-align: center;
+  color: #60d0ff;
+  opacity: 0.7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 2px;
+}
+
+.pedestal-item-icon {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+}
+
+/* ============================================================
+   Door open glow
+   ============================================================ */
+.door-open-glow {
+  position: absolute;
+  inset: -4px;
+  pointer-events: none;
+  box-shadow: 0 0 20px #3aff8a;
+  animation: open-glow-anim 2s ease-in-out infinite;
+}
+
+@keyframes open-glow-anim {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 1; }
+}
+
+/* ============================================================
+   object_revealed — new object appear pulse
+   ============================================================ */
+@keyframes reveal-burst {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 121, 198, 0.8); }
+  60%  { box-shadow: 0 0 0 20px rgba(255, 121, 198, 0); }
+  100% { box-shadow: none; }
+}
+
+.game-object.newly-revealed {
+  animation: reveal-burst 1s ease forwards;
+}
+
+/* ============================================================
+   Right sidebar independent scroll
+   ============================================================ */
+.right-sidebar {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
