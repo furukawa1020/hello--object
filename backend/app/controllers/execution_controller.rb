@@ -20,4 +20,14 @@ class ExecutionController < ApplicationController
       objects: WorldManager.all_objects.map(&:state)
     }
   end
+
+  def methods_for
+    obj = WorldManager.get_object(params[:name])
+    if obj
+      methods = obj.class.public_instance_methods(false).map(&:to_s).sort
+      render json: { success: true, methods: methods, class_name: obj.class.name }
+    else
+      render json: { success: false, error: "Object not found" }
+    end
+  end
 end
