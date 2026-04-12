@@ -99,20 +99,14 @@
 /* World View (Schematic) */
 .world-view {
   flex: 1;
-  padding: 30px;
+  padding: 0;
   background-image: 
     linear-gradient(var(--border-color) 1px, transparent 1px),
     linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: center;
-}
-
-.world-header h2 {
-  font-size: 14px;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .scene {
