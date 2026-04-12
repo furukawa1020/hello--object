@@ -166,6 +166,46 @@
   border: 1px solid var(--text-primary);
 }
 
+/* Chest Schematic */
+.chest-sprite {
+  width: 60px;
+  height: 40px;
+  border: 2px solid var(--text-primary);
+  position: relative;
+}
+
+.chest-sprite.is-locked {
+  border-color: var(--error-color);
+}
+
+.chest-latch {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--text-primary);
+  transform: translate(-50%, -50%);
+}
+
+/* Key Schematic */
+.key-sprite {
+  width: 30px;
+  height: 10px;
+  border: 1px solid var(--accent-color);
+  position: relative;
+}
+
+.key-loop {
+  position: absolute;
+  left: -8px;
+  top: -4px;
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--accent-color);
+  border-radius: 50%;
+}
+
 /* Magic Note (Terminal) */
 .magic-note {
   height: 220px;
