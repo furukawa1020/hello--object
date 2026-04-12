@@ -5,6 +5,7 @@ import WorldView from './components/WorldView';
 import ObjectDetail from './components/ObjectDetail';
 import HistoryPanel from './components/HistoryPanel';
 import NaviGuide from './components/NaviGuide';
+import Onboarding from './components/Onboarding';
 
 function App() {
   const [objects, setObjects] = useState([]);
@@ -13,10 +14,17 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [lastExecution, setLastExecution] = useState({ result: null, error: null });
   const [actionCode, setActionCode] = useState("");
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
     fetchState();
+    const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
+    if (!hasSeenOnboarding) {
+      setShowOnboarding(true);
+    }
   }, []);
+
+  // ... (fetchState and handleExecute remain the same)
 
   // ... (fetchState and handleExecute remain the same)
   const fetchState = async () => {
