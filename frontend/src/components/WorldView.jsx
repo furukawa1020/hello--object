@@ -20,6 +20,16 @@ const WorldView = ({ objects, onSelect, selectedId }) => {
                   <div className="door-knob"></div>
                 </div>
               )}
+              {obj.class_name === 'Chest' && (
+                <div className={`chest-sprite ${obj.variables.locked ? 'is-locked' : ''}`}>
+                  <div className="chest-latch"></div>
+                </div>
+              )}
+              {obj.class_name === 'Key' && (
+                <div className="key-sprite">
+                  <div className="key-loop"></div>
+                </div>
+              )}
             </div>
             <div className="object-label">{obj.name}</div>
           </div>
