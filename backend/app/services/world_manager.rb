@@ -73,30 +73,30 @@ class WorldManager
     @world.hide_object(secret_tome)
 
     # ═══════════════════════════════════════════════════
-    # Scene 3: The Archive — 深い知識（第三の間）
+    # Scene 4: The Departure — 脱出口
     # ═══════════════════════════════════════════════════
-    @world.scene :the_archive do
-      tome :tome_003, '「継承」の書',
-           'クラスの家系図について。`Door.ancestors` を試してみよ。'
+    @world.scene :the_departure do
+      world_gate :gate_exit, '真理の門',
+                 '世界の終わりを示す巨大な門。これを抜ければ、あなたは真のRubyistとなる。'
 
-      tome :tome_004, '「状態」の記録',
-           '`@` で始まる変数はインスタンス変数。`door.instance_variables` で一覧を見よ。'
-
-      tome :tome_005, '「動的性」の証',
-           'Rubyは実行中に自らを書き換える。これをモンキーパッチという。class を再オープンすれば実証できる。'
-
-      object :mirror, :mirror_002, '記録の鏡',
-             '世界の真実を映す鏡。`mirror_002.reflect(任意のオブジェクト)` で詳細を調べられる。'
-
-      npc :librarian_001, '図書館の守護者',
-          '古い書物に囲まれた沈黙の番人。',
-          lines: [
-            "ここは知識の間です。書籍に記された真理があなたを導くでしょう。",
-            "tome_003.read → tome_004.read → tome_005.read の順に読むことをお勧めします。",
-            "`1.class` → Integer。`Integer.superclass` → Numeric。これが継承の連鎖です。",
-            "`Door.instance_methods(false)` で Door 独自のメソッド一覧を見られます。",
-            "すべての Ruby クラスは BasicObject から始まります。`Door.ancestors` を試してみてください。"
-          ]
+      npc :gatekeeper_001, '門番のホログラム',
+          '実体のない青白い光。アクセス権限を監視している。',
+          branches: {
+            'start' => {
+              lines: ["…権限なき者の通行は認められません。"],
+              auto_next: 'intro'
+            },
+            'intro' => {
+              lines: ["あなたは門を開きたいのですか？ `respond('yes')` と答えなさい。"],
+            },
+            'yes' => {
+              lines: [
+                "ならば「ADMIN_ACCESS」という鍵を authority メソッドに渡しなさい。",
+                "ただし…ゲートの整合性（@integrity）が保たれている限り、門は開きません。",
+                "あなたの『メタプログラミング』で、整合性を 0 にするのです。"
+              ],
+            }
+          }
     end
   end
 
@@ -118,6 +118,8 @@ class WorldManager
     'tome_005'        => 'tome_005',
     'mirror_002'      => 'mirror_002',
     'librarian'       => 'librarian_001',
+    'gate'            => 'gate_exit',
+    'gatekeeper'      => 'gatekeeper_001',
   }.freeze
 
   def self.get_object(name)
@@ -140,7 +142,7 @@ class WorldManager
   end
 
   def self.reset
-    [Door, Chest, Key, Tome, Npc, Mirror, Pedestal].each do |klass|
+    [Door, Chest, Key, Tome, Npc, Mirror, Pedestal, WorldGate].each do |klass|
       load Rails.root.join('app', 'models', "#{klass.name.underscore}.rb").to_s rescue nil
     end
     initialize_world
