@@ -2,7 +2,7 @@ import React from 'react';
 
 const WorldView = ({ objects, onSelect, selectedId }) => {
   return (
-    <div className="world-view glass-panel">
+    <div className="world-view tactical-panel">
       <div className="world-header">
         <h2>The First Room</h2>
       </div>
