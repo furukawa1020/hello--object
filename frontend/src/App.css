@@ -283,6 +283,63 @@
   color: var(--text-secondary);
 }
 
+/* Object Detail Beginner Elements */
+.beginner-guide {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.status-label {
+  font-size: 14px;
+  background: var(--accent-soft);
+  padding: 6px 12px;
+  border-left: 3px solid var(--accent-color);
+  color: var(--text-primary);
+}
+
+.action-section {
+  margin-top: 20px;
+}
+
+.action-section h4 {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.action-btn {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 10px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  border-color: var(--accent-color);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.action-code-hint {
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-family: var(--font-main);
+  margin-top: 4px;
+}
+
 .state-section {
   margin-top: 24px;
   padding: 12px;
