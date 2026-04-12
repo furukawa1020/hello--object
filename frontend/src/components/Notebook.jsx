@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 /**
  * Notebook — ユーザーがコードスニペットを保存・管理できる機能
