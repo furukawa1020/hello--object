@@ -1,30 +1,87 @@
 import React, { useState, useEffect } from 'react';
 
+// Map object ID to the alias used in the evaluator registry
+const idAlias = (obj) => {
+  const map = {
+    door_001:    'door',
+    chest_001:   'chest',
+    key_001:     'key',
+    tome_001:    'tome',
+    tome_003:    'tome_003',
+    tome_004:    'tome_004',
+    tome_005:    'tome_005',
+    sage_001:    'sage',
+    mirror_001:  'mirror',
+    mirror_002:  'mirror_002',
+    cursed_door: 'cursed_door',
+    tome_002:    'forbidden_tome',
+    warlock_001: 'warlock',
+    pedestal_001:'pedestal',
+    librarian_001:'librarian',
+  };
+  return map[obj.id] || obj.id;
+};
+
 // Action templates per class
 const ACTIONS = {
-  Door: (obj) => [
-    { label: "🔓 鍵を開ける",    code: `door.unlock`,  disabled: !obj.variables.locked },
-    { label: "🚪 扉を開く",      code: `door.open`,    disabled: obj.variables.locked },
-    { label: "🔒 鍵をかける",    code: `door.lock`,    disabled: obj.variables.locked },
-    { label: "🚪 扉を閉める",    code: `door.close`,   disabled: !obj.variables.open },
-  ],
-  Chest: () => [
-    { label: "🗝 鍵を使って開ける", code: "chest.unlock(key)" },
-    { label: "📦 中を覗く",        code: "chest.open" },
-  ],
-  Key: () => [
-    { label: "🔍 鍵を調べる", code: "key.inspect" },
-  ],
-  Tome: (obj) => [
-    { label: "📜 読む", code: `${obj.id === 'tome_002' ? 'forbidden_tome' : 'tome'}.read` },
-    { label: "💡 ヒントを聞く", code: `${obj.id === 'tome_002' ? 'forbidden_tome' : 'tome'}.tip` },
-  ],
-  Npc: () => [
-    { label: "💬 話しかける",         code: "sage.talk" },
-    { label: "❓ 呪いについて聞く",    code: "sage.ask('cursed')" },
-    { label: "❓ クラスについて聞く",  code: "sage.ask('class')" },
-    { label: "❓ メソッドについて聞く", code: "sage.ask('method')" },
-  ],
+  Door: (obj) => {
+    const a = idAlias(obj);
+    return [
+      { label: `🔓 鍵を開ける`,  code: `${a}.unlock`,  disabled: !obj.variables.locked },
+      { label: `🚪 扉を開く`,    code: `${a}.open`,    disabled: obj.variables.locked },
+      { label: `🔒 鍵をかける`,  code: `${a}.lock`,    disabled: obj.variables.locked },
+      { label: `🚪 扉を閉める`,  code: `${a}.close`,   disabled: !obj.variables.open },
+    ];
+  },
+  Chest: (obj) => {
+    const a = idAlias(obj);
+    return [
+      { label: '🗝 鍵を使って開ける', code: `${a}.unlock(key)` },
+      { label: '📦 中を覗く',        code: `${a}.open` },
+    ];
+  },
+  Key: (obj) => {
+    const a = idAlias(obj);
+    return [
+      { label: '🔍 鍵を調べる',     code: `${a}.inspect` },
+      { label: '🔮 鏡で反射する',   code: `mirror.reflect(${a})` },
+    ];
+  },
+  Tome: (obj) => {
+    const a = idAlias(obj);
+    return [
+      { label: '📜 読む',         code: `${a}.read` },
+      { label: '💡 ヒントを1つ',  code: `${a}.tip` },
+      { label: '🔮 鏡で反射する', code: `mirror.reflect(${a})` },
+    ];
+  },
+  Npc: (obj) => {
+    const a = idAlias(obj);
+    const talkCode = a === 'warlock' ? `warlock.talk` : `${a}.talk`;
+    return [
+      { label: '💬 話しかける',            code: talkCode },
+      { label: '❓ 呪いについて聞く',       code: `${a}.ask('cursed')` },
+      { label: '❓ クラスについて聞く',     code: `${a}.ask('class')` },
+      { label: '🔮 鏡で反射する',          code: `mirror.reflect(${a})` },
+    ];
+  },
+  Mirror: (obj) => {
+    const a = idAlias(obj);
+    return [
+      { label: '🚪 ドアを反射',    code: `${a}.reflect(door)` },
+      { label: '📦 チェストを反射', code: `${a}.reflect(chest)` },
+      { label: '🗝 鍵を反射',     code: `${a}.reflect(key)` },
+      { label: '🔮 覗き込む',     code: `${a}.gaze` },
+      { label: '✕ 消す',         code: `${a}.reflect` },
+    ];
+  },
+  Pedestal: (obj) => {
+    const a = idAlias(obj);
+    return [
+      { label: '🗝 鍵を置く',     code: `${a}.place(key)` },
+      { label: '↩ アイテムを外す', code: `${a}.remove` },
+    ];
+  },
 };
 
 // Friendly state labels
@@ -32,12 +89,15 @@ const getFriendlyState = (obj, allObjects) => {
   const labels = [];
   const v = obj.variables;
 
-  if (v.cursed)           labels.push({ icon: '⛧', text: '強力な呪いがかかっています', level: 'danger' });
-  if (v.locked === true)  labels.push({ icon: '🔒', text: '鍵がかかっています', level: 'warning' });
-  if (v.locked === false) labels.push({ icon: '🔓', text: '鍵は開いています', level: 'ok' });
-  if (v.open === true)    labels.push({ icon: '🚪', text: '扉が開いています', level: 'ok' });
+  if (v.cursed)             labels.push({ icon: '⛧', text: '強力な呪いがかかっています', level: 'danger' });
+  if (v.locked === true)    labels.push({ icon: '🔒', text: '鍵がかかっています', level: 'warning' });
+  if (v.locked === false)   labels.push({ icon: '🔓', text: '鍵は開いています', level: 'ok' });
+  if (v.open === true)      labels.push({ icon: '🚪', text: '扉が開いています', level: 'ok' });
   if (v.open === false && v.locked === false) labels.push({ icon: '🚪', text: '扉は閉じています', level: 'neutral' });
-  if (v.read === true)    labels.push({ icon: '📖', text: '読み終わりました', level: 'ok' });
+  if (v.read === true)      labels.push({ icon: '📖', text: '読み終わりました', level: 'ok' });
+  if (v.activated === true) labels.push({ icon: '⚡', text: '台座が起動中！', level: 'ok' });
+  if (v.reflecting)         labels.push({ icon: '🔮', text: `映中: ${v.reflecting}`, level: 'neutral' });
+  if (v.reflection_count > 0) labels.push({ icon: '◈', text: `${v.reflection_count}回反射`, level: 'neutral' });
 
   if (v.items && v.items.length > 0) {
     const names = v.items.map(id => {
