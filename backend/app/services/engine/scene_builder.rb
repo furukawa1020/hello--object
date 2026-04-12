@@ -46,5 +46,13 @@ module Engine
     def npc(id, name, description, **vars)
       object(:npc, id, name, description, **vars)
     end
+
+    def mirror(id, name, description, **vars)
+      object(:mirror, id, name, description, **vars)
+    end
+
+    def pedestal(id, name, description, **vars)
+      object(:pedestal, id, name, description, **vars)
+    end
   end
 end
