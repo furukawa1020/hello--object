@@ -18,6 +18,8 @@ const idAlias = (obj) => {
     warlock_001: 'warlock',
     pedestal_001:'pedestal',
     librarian_001:'librarian',
+    gate_exit:     'gate',
+    gatekeeper_001:'gatekeeper',
   };
   return map[obj.id] || obj.id;
 };
@@ -62,6 +64,7 @@ const ACTIONS = {
       { label: '💬 話しかける',            code: talkCode },
       { label: '❓ 呪いについて聞く',       code: `${a}.ask('cursed')` },
       { label: '❓ クラスについて聞く',     code: `${a}.ask('class')` },
+      { label: '🤝 答える (yes/no等)',     code: `${a}.respond('yes')` },
       { label: '🔮 鏡で反射する',          code: `mirror.reflect(${a})` },
     ];
   },
@@ -80,6 +83,13 @@ const ACTIONS = {
     return [
       { label: '🗝 鍵を置く',     code: `${a}.place(key)` },
       { label: '↩ アイテムを外す', code: `${a}.remove` },
+    ];
+  },
+  WorldGate: (obj) => {
+    const a = idAlias(obj);
+    return [
+      { label: '🔑 認証する',     code: `${a}.authorize('ADMIN_ACCESS')` },
+      { label: '🚪 門を開く',     code: `${a}.open` },
     ];
   },
 };
@@ -155,6 +165,17 @@ end`,
   def ask(topic)
     # トピックに応じた回答を返す
     responses[topic]
+  end
+end`,
+  WorldGate: `class WorldGate < GameObject
+  def authorize(key)
+    @authorized = (key == "ADMIN_ACCESS")
+  end
+
+  def open
+    if @authorized && @integrity <= 0
+      @open = true
+    end
   end
 end`,
 };
@@ -269,6 +290,28 @@ end`}</pre>
               </span>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Player Notes */}
+      <div className="notes-section">
+        <div className="notes-header">
+          <h4>Player Notes <span className="mono-label">.note</span></h4>
+          <button className="add-note-btn" onClick={() => onAction(`${idAlias(object)}.note "ここにメモを書く"`)}>
+            + Add Note
+          </button>
+        </div>
+        <div className="notes-list">
+          {object.notes && object.notes.length > 0 ? (
+            object.notes.map((note, i) => (
+              <div key={i} className="note-item">
+                <span className="note-bullet">▹</span>
+                <span className="note-text">{note}</span>
+              </div>
+            ))
+          ) : (
+            <div className="notes-empty">メモはありません。</div>
+          )}
         </div>
       </div>
     </div>
