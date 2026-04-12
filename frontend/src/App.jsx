@@ -8,6 +8,15 @@ import NaviGuide from './components/NaviGuide';
 import Onboarding from './components/Onboarding';
 import Notebook from './components/Notebook';
 import EventLog from './components/EventLog';
+import VictoryScreen from './components/VictoryScreen';
+import StatsBar from './components/StatsBar';
+import { sounds, eventSound } from './utils/sounds';
+
+// Detect win: cursed_door is open
+const isVictory = (objects) => {
+  const cursed = objects.find(o => o.id === 'cursed_door');
+  return cursed && cursed.variables.open === true;
+};
 
 function App() {
   const [objects, setObjects]               = useState([]);
@@ -19,6 +28,8 @@ function App() {
   const [actionCode, setActionCode]         = useState('');
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [notebookCode, setNotebookCode]     = useState('');
+  const [showVictory, setShowVictory]       = useState(false);
+  const [stats, setStats]                   = useState({ executions: 0, events: 0, objectsInteracted: new Set(), errors: 0 });
 
   useEffect(() => {
     fetchState();
@@ -49,10 +60,34 @@ function App() {
       setLastExecution({ result: data.result, error: data.error });
       setActionCode('');
 
+      // Sound feedback
+      if (data.error) {
+        sounds.error();
+      } else {
+        // Fire event-specific sounds
+        if (data.events && data.events.length > 0) {
+          data.events.forEach(ev => eventSound(ev.name));
+        } else {
+          sounds.success();
+        }
+      }
+
       // Accumulate events
       if (data.events && data.events.length > 0) {
         setAllEvents(prev => [...prev, ...data.events].slice(-50));
       }
+
+      // Stats update
+      setStats(prev => {
+        const interacted = new Set(prev.objectsInteracted);
+        if (selectedObject) interacted.add(selectedObject.id);
+        return {
+          executions: prev.executions + 1,
+          events:     prev.events + (data.events?.length || 0),
+          objectsInteracted: interacted,
+          errors:     prev.errors + (data.error ? 1 : 0),
+        };
+      });
 
       setHistory(prev => [{
         code,
@@ -69,15 +104,21 @@ function App() {
           const updated = data.objects.find(o => o.id === selectedObject.id);
           if (updated) setSelectedObject(updated);
         }
+        // Check win condition
+        if (!showVictory && isVictory(data.objects)) {
+          setTimeout(() => setShowVictory(true), 600);
+        }
       }
     } catch (e) {
       console.error('execute failed', e);
+      sounds.error();
       setLastExecution({ result: null, error: 'Network Error: Cannot connect to server.' });
     }
   };
 
   const handleReset = async () => {
     if (!window.confirm('世界をリセットして、すべての変更を元に戻します。よろしいですか？')) return;
+    sounds.reset();
     try {
       const r    = await fetch('http://localhost:3000/reset', { method: 'POST' });
       const data = await r.json();
@@ -87,15 +128,22 @@ function App() {
         setAllEvents([]);
         setSelectedObject(null);
         setLastExecution({ result: null, error: null });
+        setShowVictory(false);
+        setStats({ executions: 0, events: 0, objectsInteracted: new Set(), errors: 0 });
       }
     } catch (e) {
       console.error('reset failed', e);
     }
   };
 
-  const handleSaveToNotebook = (code) => {
-    // Pass down to Notebook via state — Notebook manages its own data
-    setNotebookCode(code);
+  const handleSelectObject = (obj) => {
+    sounds.select();
+    setSelectedObject(obj);
+  };
+
+  const statsDisplay = {
+    ...stats,
+    objectsInteracted: stats.objectsInteracted.size,
   };
 
   return (
@@ -105,6 +153,7 @@ function App() {
           <h1>hello, <span className="brand-accent">object</span></h1>
           <span className="app-subtitle">Ruby Interactive World</span>
         </div>
+        <StatsBar stats={statsDisplay} />
         <div className="header-actions">
           <button onClick={handleReset} className="reset-btn">⟳ Reset World</button>
           <div className="status-badge">
@@ -115,32 +164,27 @@ function App() {
       </header>
 
       <main className="main-layout">
-        {/* Left: World + Note */}
         <div className="left-column">
           <WorldView
             objects={objects}
-            onSelect={setSelectedObject}
+            onSelect={handleSelectObject}
             selectedId={selectedObject?.id}
           />
           <MagicNote
             onExecute={handleExecute}
             selectedObject={selectedObject}
             initialCode={actionCode}
-            onSaveToNotebook={handleSaveToNotebook}
+            onSaveToNotebook={setNotebookCode}
           />
         </div>
 
-        {/* Right: Detail + Notebook + History */}
         <aside className="right-sidebar">
           <ObjectDetail
             object={selectedObject}
             onAction={setActionCode}
             objects={objects}
           />
-          <Notebook
-            onInsert={setActionCode}
-            pendingCode={notebookCode}
-          />
+          <Notebook onInsert={setActionCode} pendingCode={notebookCode} />
           <EventLog events={allEvents} />
           <HistoryPanel history={history} />
         </aside>
@@ -151,6 +195,10 @@ function App() {
         lastResult={lastExecution.result}
         lastError={lastExecution.error}
       />
+
+      {showVictory && (
+        <VictoryScreen onDismiss={() => setShowVictory(false)} />
+      )}
 
       {showOnboarding && (
         <Onboarding onComplete={() => {
