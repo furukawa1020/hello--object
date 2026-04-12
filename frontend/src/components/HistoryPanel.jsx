@@ -2,7 +2,7 @@ import React from 'react';
 
 const HistoryPanel = ({ history }) => {
   return (
-    <div className="history-panel glass-panel">
+    <div className="history-panel tactical-panel">
       <h3>History</h3>
       <div className="history-list">
         {history.length === 0 && <p className="empty-msg">No conversations yet.</p>}
