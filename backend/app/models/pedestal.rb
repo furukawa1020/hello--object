@@ -1,8 +1,9 @@
-# Pedestal — 台座。アイテムを置くことでアクションが発生する仕掛け
+# Pedestal — 台座。正しいアイテムを置くと隠されたオブジェクトが解放される
 class Pedestal < GameObject
-  def initialize(id:, name:, description:, accepts: nil, reward_message: nil)
+  def initialize(id:, name:, description:, accepts: nil, reveals: nil, reward_message: nil)
     super(id: id, name: name, description: description)
-    @accepts     = accepts        # どのクラス名を受け付けるか (e.g., "Key")
+    @accepts     = accepts
+    @reveals     = reveals     # object id to reveal in the world
     @reward_message = reward_message
     @activated   = false
     @holding     = nil
@@ -10,17 +11,35 @@ class Pedestal < GameObject
 
   def place(item)
     if @activated
-      "台座はすでに起動している。"
-    elsif @accepts && !item.is_a?(Object.const_get(@accepts) rescue Object)
-      "この台座には #{@accepts} クラスのオブジェクトしか置けないようだ。"
-    elsif item.is_a?(GameObject)
-      @holding  = item.id
-      @activated = true
-      emit('pedestal_activated', { item_id: item.id })
-      @reward_message || "#{item.name} を台座に置くと、何かが起動した…！"
-    else
-      "それは置けないようだ。"
+      return "台座はすでに起動している。もう一度試す前に remove で取り外しなさい。"
     end
+
+    unless item.is_a?(GameObject)
+      return "それは台座に置けないようだ。"
+    end
+
+    if @accepts
+      klass = Object.const_get(@accepts) rescue nil
+      unless klass && item.is_a?(klass)
+        return "この台座には #{@accepts} クラスのオブジェクトしか置けないようだ。"\
+               "（#{item.class.name} は受け付けない）"
+      end
+    end
+
+    @holding   = item.id
+    @activated = true
+    emit('pedestal_activated', { item_id: item.id })
+
+    # Reveal a hidden object if configured
+    revealed_msg = ""
+    if @reveals
+      obj = Engine::EventRecorder.world&.reveal_object(@reveals)
+      if obj
+        revealed_msg = "\n\n✨ 台座の光が部屋を照らした…！封印されていた「#{obj.name}」が姿を現した！"
+      end
+    end
+
+    (@reward_message || "#{item.name} を台座に置くと、なにかが起動した…！") + revealed_msg
   end
 
   def remove
@@ -31,6 +50,16 @@ class Pedestal < GameObject
       "#{held} を台座から取り外した。台座は非活性化した。"
     else
       "台座には何も置かれていない。"
+    end
+  end
+
+  def inspect_state
+    if @activated
+      "台座は起動中。#{@holding}が置かれている。"
+    elsif @holds
+      "台座にはなにかが置かれている。"
+    else
+      "台座は空だ。#{@accepts ? "#{@accepts}クラスのオブジェクトを置けそうだ。" : ''}"
     end
   end
 end
