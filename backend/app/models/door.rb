@@ -7,11 +7,13 @@ class Door < GameObject
 
   def unlock
     @locked = false
+    emit('door_unlocked')
     "カチャリと音がして、ドアの鍵が開きました。"
   end
 
   def lock
     @locked = true
+    emit('door_locked')
     "ドアに鍵をかけました。"
   end
 
@@ -20,6 +22,7 @@ class Door < GameObject
       raise "鍵がかかっていて開きません。"
     end
     @open = true
+    emit('door_opened')
     "ドアがゆっくりと開きました。"
   end
 
