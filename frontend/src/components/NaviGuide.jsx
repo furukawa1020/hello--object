@@ -23,6 +23,10 @@ const NaviGuide = ({ currentObject, lastResult, lastError }) => {
         setMessage("このチェストは鍵がかかっていますね。まずは『鍵』を探して、それを使ってみてはどうでしょうか？");
       } else if (currentObject.class_name === 'Door' && currentObject.variables.locked) {
         setMessage("扉に鍵がかかっています。『door.unlock』と唱えれば、道が開けるかもしれません。");
+      } else if (currentObject.class_name === 'Mirror') {
+        setMessage("知識の鏡です。mirror.reflect(door) のように、任意のオブジェクトを引数に渡すと、そのクラスや使えるメソッドを映してくれます。");
+      } else if (currentObject.class_name === 'Pedestal') {
+        setMessage("試練の台座です。正しいアイテムを置くと何かが起こるようです。pedestal.place(key) を試してみてください。");
       } else {
         setMessage(`${currentObject.name}を調べていますね。そのオブジェクトが持っている『変数』に注目してみてください。`);
       }
