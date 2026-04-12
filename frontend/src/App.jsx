@@ -24,6 +24,22 @@ function App() {
     }
   }, []);
 
+  const handleReset = async () => {
+    if (!window.confirm("世界をリセットして、すべての変更を元に戻します。よろしいですか？")) return;
+    try {
+      const response = await fetch('http://localhost:3000/reset', { method: 'POST' });
+      const data = await response.json();
+      if (data.success) {
+        setObjects(data.objects);
+        setHistory([]);
+        setSelectedObject(null);
+        setLastExecution({ result: "World Reset", error: null });
+      }
+    } catch (error) {
+      console.error('Failed to reset:', error);
+    }
+  };
+
   const fetchState = async () => {
     try {
       const response = await fetch('http://localhost:3000/state');
@@ -74,7 +90,12 @@ function App() {
     <div className="app-container">
       <header className="app-header">
         <h1>hello, object</h1>
-        <div className="status-badge">Ruby 4.0.0 Engine Active</div>
+        <div className="header-actions">
+          <button onClick={handleReset} className="reset-btn">
+            Reset World
+          </button>
+          <div className="status-badge">Ruby 4.0.0 Engine Active</div>
+        </div>
       </header>
 
       <main className="main-layout">
