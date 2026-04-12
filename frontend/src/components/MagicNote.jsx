@@ -1,61 +1,94 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-const MagicNote = ({ onExecute, selectedObject, initialCode }) => {
+const MagicNote = ({ onExecute, selectedObject, initialCode, onSaveToNotebook }) => {
   const [input, setInput] = useState('');
+  const [isExecuting, setIsExecuting] = useState(false);
+  const [history, setHistory] = useState([]);
+  const [historyIdx, setHistoryIdx] = useState(-1);
+  const textareaRef = useRef(null);
 
   useEffect(() => {
     if (initialCode) {
       setInput(initialCode);
+      textareaRef.current?.focus();
     }
   }, [initialCode]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (input.trim()) {
-      onExecute(input);
-      setInput('');
-    }
+    const code = input.trim();
+    if (!code) return;
+
+    setIsExecuting(true);
+    setHistory(prev => [code, ...prev.slice(0, 49)]);
+    setHistoryIdx(-1);
+
+    await onExecute(code);
+    setInput('');
+    setIsExecuting(false);
   };
 
-  const handleSuggestion = (method) => {
-    if (selectedObject) {
-      const internalName = selectedObject.name_internal || selectedObject.id.split('_')[0]; 
-      // Assuming we have an internal name or use id part
-      // For the prototype, we use 'door' for the door object
-      const target = selectedObject.id.includes('door') ? 'door' : selectedObject.id;
-      setInput(`${target}.${method}`);
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+      return;
+    }
+    // Arrow up/down for history
+    if (e.key === 'ArrowUp' && history.length > 0) {
+      e.preventDefault();
+      const nextIdx = Math.min(historyIdx + 1, history.length - 1);
+      setHistoryIdx(nextIdx);
+      setInput(history[nextIdx]);
+    }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const nextIdx = historyIdx - 1;
+      if (nextIdx < 0) {
+        setHistoryIdx(-1);
+        setInput('');
+      } else {
+        setHistoryIdx(nextIdx);
+        setInput(history[nextIdx]);
+      }
     }
   };
 
   return (
     <div className="magic-note tactical-panel">
       <div className="note-header">
-        <span>Magic Note</span>
-        {selectedObject && (
-          <div className="suggestions">
-            <span className="label">Try:</span>
-            {['unlock', 'open', 'close', 'lock'].map(m => (
-              <button key={m} onClick={() => handleSuggestion(m)} className="suggestion-btn">
-                .{m}
-              </button>
-            ))}
-          </div>
-        )}
+        <span className="note-title">✦ Magic Note</span>
+        <div className="note-controls">
+          {input.trim() && onSaveToNotebook && (
+            <button
+              className="save-snippet-btn"
+              onClick={() => onSaveToNotebook(input.trim())}
+              title="ノートブックに保存"
+            >
+              📓 保存
+            </button>
+          )}
+          <span className="history-hint">↑↓ 履歴</span>
+        </div>
       </div>
+
       <form onSubmit={handleSubmit} className="input-area">
         <textarea
+          ref={textareaRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="オブジェクトに話しかけてみよう... (例: door.unlock)"
+          onKeyDown={handleKeyDown}
+          placeholder={"オブジェクトに話しかけてみよう...\n例: door.unlock\n例: class Door; def unlock; @locked=false; end; end"}
           className="mono"
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              handleSubmit(e);
-            }
-          }}
+          disabled={isExecuting}
+          autoFocus
         />
-        <button type="submit" className="button-tactical">Execute</button>
+        <div className="note-footer">
+          <span className="keyboard-hint">Enter で実行 / Shift+Enter で改行</span>
+          <button type="submit" className={`button-tactical ${isExecuting ? 'loading' : ''}`} disabled={isExecuting}>
+            {isExecuting ? '実行中...' : 'Execute ⏎'}
+          </button>
+        </div>
       </form>
     </div>
   );
