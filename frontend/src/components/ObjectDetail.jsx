@@ -3,14 +3,14 @@ import React from 'react';
 const ObjectDetail = ({ object }) => {
   if (!object) {
     return (
-      <div className="object-detail glass-panel empty">
+      <div className="object-detail tactical-panel empty">
         <p>オブジェクトを選択してください</p>
       </div>
     );
   }
 
   return (
-    <div className="object-detail glass-panel">
+    <div className="object-detail tactical-panel">
       <div className="detail-header">
         <h3>{object.name}</h3>
         <span className="class-tag">{object.class_name}</span>
