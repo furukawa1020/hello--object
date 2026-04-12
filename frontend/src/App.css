@@ -340,6 +340,28 @@
   margin-top: 4px;
 }
 
+.schematic-section {
+  margin-top: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 12px;
+  border: 1px dashed var(--border-color);
+}
+
+.schematic-section h4 {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.schematic-code {
+  font-size: 11px;
+  line-height: 1.4;
+  color: #88ccff;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
 .state-section {
   margin-top: 24px;
   padding: 12px;
