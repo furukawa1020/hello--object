@@ -40,8 +40,8 @@ class RubyEvaluator
                       hint = suggestions.any? ? "\nもしかして: #{suggestions.map { |m| ".#{m}" }.join(', ')}" : "\n右側の「Actions」ボタンを参考にしてみてください。"
                       "『#{method_name || 'その言葉'}』は、このオブジェクトには通じないようです。#{hint}"
                     when NameError
-                      available = WorldManager.registry.keys.join(', ')
-                      "『#{e.name}』というオブジェクトは見つかりません。使えるオブジェクト: #{available}"
+                      available = @registry.keys.join(', ') rescue 'unknown'
+                      "『#{e.name}』というオブジェクトは見つかりません。"
                     when RuntimeError
                       e.message
                     else
@@ -53,7 +53,8 @@ class RubyEvaluator
         error: friendly_msg,
         error_type: e.class.name,
         events: Engine::EventRecorder.collect,
-        objects: WorldManager.all_objects.map(&:state)
+        objects: WorldManager.all_objects.map(&:state),
+        instability: @instability
       }
     end
   end
