@@ -25,12 +25,11 @@ class RubyEvaluator
       }
     end
   end
-end
 
   class EvalContext
     def initialize(registry)
-      @registry = registry
-      registry.each do |name, obj|
+      @registry = registry || {}
+      @registry.each do |name, obj|
         instance_variable_set("@#{name}", obj)
       end
     end
