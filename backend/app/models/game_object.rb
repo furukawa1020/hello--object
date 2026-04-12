@@ -5,17 +5,29 @@ class GameObject
     @id = id
     @name = name
     @description = description
-    @instance_vars = {}
+  end
+
+  # Emit a visual/game event to the frontend
+  def emit(event_name, data = {})
+    Engine::EventRecorder.record(event_name, data.merge(object_id: @id))
   end
 
   # Returns a hash of instance variables for the frontend
   def state
     vars = {}
     instance_variables.each do |var|
-      # Skip standard internals if needed
-      next if [:@id, :@name, :@description].include?(var)
-      vars[var.to_s.delete('@')] = instance_variable_get(var)
+      # Skip standard internals and parent references to avoid cycles
+      next if [:@id, :@name, :@description, :@parent].include?(var)
+      val = instance_variable_get(var)
+      
+      # Handle collections of objects
+      if val.is_a?(Array)
+        vars[var.to_s.delete('@')] = val.map { |v| v.is_a?(GameObject) ? v.id : v }
+      else
+        vars[var.to_s.delete('@')] = val
+      end
     end
+    
     {
       id: @id,
       name: @name,
@@ -26,7 +38,6 @@ class GameObject
   end
 
   # This is the "Conversation" hook.
-  # It allows us to track what happened during a method call.
   def talk(method_name, *args)
     if respond_to?(method_name)
       send(method_name, *args)
