@@ -1,17 +1,42 @@
-# NPC — 話しかけると世界の情報を教えてくれる存在
+# NPC — 話しかけると世界の情報を教えてくれる存在。Phase 13 で会話分岐に対応。
 class Npc < GameObject
-  def initialize(id:, name:, description:, lines: [])
+  def initialize(id:, name:, description:, lines: [], branches: {})
     super(id: id, name: name, description: description)
-    @lines = lines.empty? ? default_lines : lines
-    @talked_count = 0
-    @mood = "neutral"
+    @default_lines = lines.empty? ? fetch_default_lines : lines
+    @branches      = branches      # { 'topic' => { lines: [...], next_state: '...' } }
+    @talked_count  = 0
+    @current_state = 'start'
   end
 
   def talk
-    line = @lines[@talked_count % @lines.length]
     @talked_count += 1
     emit('npc_talked', { npc_id: @id })
-    line
+
+    if @branches[@current_state]
+      lines = @branches[@current_state][:lines]
+      line  = lines[@talked_count % lines.length]
+      
+      # Auto-transition if defined
+      if @branches[@current_state][:auto_next]
+        @current_state = @branches[@current_state][:auto_next]
+        @talked_count = 0
+      end
+      line
+    else
+      @default_lines[@talked_count % @default_lines.length]
+    end
+  end
+
+  def respond(choice)
+    choice = choice.to_s.downcase
+    if @branches[choice]
+      @current_state = choice
+      @talked_count = 0
+      emit('npc_talked', { npc_id: @id, choice: choice })
+      @branches[choice][:lines].first
+    else
+      "「#{choice}」については、私にはよくわかりません。"
+    end
   end
 
   def ask(topic)
@@ -21,21 +46,16 @@ class Npc < GameObject
       "cursed"  => "あの扉の呪いは、クラスの奥深くに刻まれています。定義を書き換えれば、解けるでしょう。",
       "open"    => "扉は、鍵があれば開きます。ただし…呪われていれば、別の手段が必要です。"
     }
-    responses[topic.to_s.downcase] || "「#{topic}」については知りません。"
-  end
-
-  def mood
-    "私の気分は #{@mood} です。"
+    responses[topic.to_s.downcase] || "「#{topic}」については知りません。`respond('choice')` で私に答えを示してください。"
   end
 
   private
 
-  def default_lines
+  def fetch_default_lines
     [
       "この部屋に来た者は少ない。あなたはコードを唱えて先へ進もうとしているのですか？",
       "どのオブジェクトも、その内側に変数を持っています。`inspect` で覗いてみるといいでしょう。",
-      "`ask('cursed')` と話しかけなさい。あの扉のことを教えましょう。",
-      "Rubyでは、すべてがオブジェクトです。数字でさえ。`1.class` を試してみては？"
+      "`ask('cursed')` と話しかけなさい。あの扉のことを教えましょう。"
     ]
   end
 end

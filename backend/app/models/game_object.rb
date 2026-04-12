@@ -5,6 +5,12 @@ class GameObject
     @id = id
     @name = name
     @description = description
+    @notes = []
+  end
+
+  def note(text)
+    @notes << text
+    "メモを記録しました: \"#{text}\""
   end
 
   # Emit a visual/game event to the frontend
@@ -17,7 +23,7 @@ class GameObject
     vars = {}
     instance_variables.each do |var|
       # Skip standard internals and parent references to avoid cycles
-      next if [:@id, :@name, :@description, :@parent].include?(var)
+      next if [:@id, :@name, :@description, :@parent, :@notes].include?(var)
       val = instance_variable_get(var)
       
       # Handle collections of objects
@@ -33,7 +39,8 @@ class GameObject
       name: @name,
       description: @description,
       class_name: self.class.name,
-      variables: vars
+      variables: vars,
+      notes: @notes
     }
   end
 
