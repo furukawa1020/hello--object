@@ -36,6 +36,34 @@
   border-color: #ff6666;
 }
 
+.app-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.app-brand h1 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.brand-accent {
+  color: var(--accent-color);
+}
+
+.app-subtitle {
+  font-size: 10px;
+  color: var(--text-secondary);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+/* keep old h1 selector as fallback */
 .app-header h1 {
   font-size: 20px;
   font-weight: 700;
