@@ -24,9 +24,6 @@ function App() {
     }
   }, []);
 
-  // ... (fetchState and handleExecute remain the same)
-
-  // ... (fetchState and handleExecute remain the same)
   const fetchState = async () => {
     try {
       const response = await fetch('http://localhost:3000/state');
