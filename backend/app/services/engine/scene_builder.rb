@@ -38,5 +38,13 @@ module Engine
     def chest(id, name, description, **vars)
       object(:chest, id, name, description, **vars)
     end
+
+    def tome(id, name, description, **vars)
+      object(:tome, id, name, description, **vars)
+    end
+
+    def npc(id, name, description, **vars)
+      object(:npc, id, name, description, **vars)
+    end
   end
 end
