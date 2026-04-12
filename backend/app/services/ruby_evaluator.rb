@@ -1,3 +1,4 @@
+class RubyEvaluator
   def self.evaluate(code)
     begin
       Engine::EventRecorder.start_session
@@ -24,6 +25,7 @@
       }
     end
   end
+end
 
   class EvalContext
     def initialize(registry)
