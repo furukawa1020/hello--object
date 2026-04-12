@@ -3,13 +3,14 @@ import React, { useEffect, useRef } from 'react';
 const EVENT_LABELS = {
   'door_unlocked':        { icon: '🔓', text: '扉の鍵が開いた', color: '#3aff8a' },
   'door_locked':          { icon: '🔒', text: '扉に鍵がかかった', color: '#ff993a' },
-  'door_opened':          { icon: '🚪', text: '扉が開いた',   color: '#3aff8a' },
+  'door_opened':          { icon: '🚪', text: '扉が開いた！',   color: '#3aff8a' },
   'chest_unlocked':       { icon: '🗝',  text: 'チェストが開錠された', color: '#3aff8a' },
   'chest_opened':         { icon: '📦', text: 'チェストが開いた', color: '#ffcc44' },
-  'npc_talked':           { icon: '💬', text: '賢者が語った',  color: '#60d0ff' },
+  'npc_talked':           { icon: '💬', text: '語りかけた',     color: '#60d0ff' },
   'tome_opened':          { icon: '📜', text: '古文書が読まれた', color: '#c8a0ff' },
-  'mirror_reflected':     { icon: '🔮', text: '鏡が反射した',  color: '#c8a0ff' },
+  'mirror_reflected':     { icon: '🔮', text: '鏡が反射した',   color: '#c8a0ff' },
   'pedestal_activated':   { icon: '⚡', text: '台座が起動した！', color: '#ffcc44' },
+  'object_revealed':      { icon: '✨', text: '新たなオブジェクトが現れた！', color: '#ff79c6' },
 };
 
 const EventLog = ({ events }) => {
