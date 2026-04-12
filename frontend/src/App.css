@@ -112,8 +112,12 @@
 .scene {
   flex: 1;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 24px;
+  padding: 24px;
 }
 
 .game-object {
