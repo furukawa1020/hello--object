@@ -2,29 +2,34 @@ class RubyEvaluator
   def self.evaluate(code)
     begin
       Engine::EventRecorder.start_session
-      
+
       context = EvalContext.new(WorldManager.registry)
-      # We use instance_eval to execute code in the context of the world objects
       result = context.instance_eval(code)
-      
+
       events = Engine::EventRecorder.collect
-      
+
       {
         success: true,
-        result: result,
+        result: serialize_result(result),
+        result_type: result.class.name,
         events: events,
         objects: WorldManager.all_objects.map(&:state)
       }
     rescue StandardError, ScriptError => e
       friendly_msg = case e
                     when NoMethodError
-                      # Extract the method name if possible
-                      method_name = e.message.match(/undefined method `(.+)' for/)&.[](1)
-                      "『#{method_name || 'その言葉'}』は、このオブジェクトには通じないようです。右側の「Actions」ボタンを参考にしてみてください。"
+                      method_name = e.message.match(/undefined method [`'](.+)['`] for/)&.[](1)
+                      receiver_class = e.message.match(/for an instance of (\w+)|for.*:(\w+)/)&.captures&.compact&.first
+                      suggestions = receiver_class ? suggest_methods(receiver_class, method_name) : []
+                      hint = suggestions.any? ? "\nもしかして: #{suggestions.map { |m| ".#{m}" }.join(', ')}" : "\n右側の「Actions」ボタンを参考にしてみてください。"
+                      "『#{method_name || 'その言葉'}』は、このオブジェクトには通じないようです。#{hint}"
                     when NameError
-                      "『#{e.name}』というオブジェクトは見つかりませんでした。綴りが合っているか確認してみてください。"
-                    else
+                      available = WorldManager.registry.keys.join(', ')
+                      "『#{e.name}』というオブジェクトは見つかりません。使えるオブジェクト: #{available}"
+                    when RuntimeError
                       e.message
+                    else
+                      "#{e.class}: #{e.message}"
                     end
 
       {
@@ -35,6 +40,25 @@ class RubyEvaluator
         objects: WorldManager.all_objects.map(&:state)
       }
     end
+  end
+
+  def self.serialize_result(val)
+    case val
+    when GameObject then val.state
+    when Array      then val.map { |v| v.is_a?(GameObject) ? v.state : v }
+    when NilClass   then nil
+    else val
+    end
+  end
+
+  def self.suggest_methods(class_name, typo)
+    klass = Object.const_get(class_name) rescue nil
+    return [] unless klass
+    all = klass.public_instance_methods(false).map(&:to_s)
+    # Sort by Levenshtein-like character overlap
+    all.min_by { |m| -(m.chars & (typo || '').chars).length }.then { |best|
+      all.select { |m| m.start_with?((typo || '')[0..0] || '') }.first(3)
+    }
   end
 
   class EvalContext
