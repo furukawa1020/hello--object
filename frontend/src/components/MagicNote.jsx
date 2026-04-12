@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const MagicNote = ({ onExecute, selectedObject }) => {
+const MagicNote = ({ onExecute, selectedObject, initialCode }) => {
   const [input, setInput] = useState('');
+
+  useEffect(() => {
+    if (initialCode) {
+      setInput(initialCode);
+    }
+  }, [initialCode]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
