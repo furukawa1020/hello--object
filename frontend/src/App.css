@@ -548,3 +548,447 @@
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border-color); }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+/* ============================================================
+   Scene Tabs
+   ============================================================ */
+.world-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.scene-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.scene-tab {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 4px 14px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.scene-tab.active {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background: var(--accent-soft);
+}
+
+.scene-tab:hover:not(.active) {
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+.scene-id-label {
+  font-size: 10px;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+}
+
+/* ============================================================
+   New Sprites: Tome & NPC
+   ============================================================ */
+.tome-sprite {
+  width: 36px;
+  height: 44px;
+  background: #3a2a10;
+  border: 2px solid #8b6914;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tome-sprite.is-read {
+  border-color: var(--accent-color);
+  background: #1a1a00;
+}
+
+.tome-pages {
+  width: 24px;
+  height: 2px;
+  background: #c89b3c;
+  box-shadow: 0 -5px 0 #c89b3c, 0 5px 0 #c89b3c;
+}
+
+.npc-sprite {
+  width: 36px;
+  height: 44px;
+  border: 2px solid #607080;
+  background: #1a2030;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.npc-eye {
+  width: 8px;
+  height: 3px;
+  background: #60d0ff;
+  box-shadow: 0 0 8px #60d0ff;
+}
+
+/* ============================================================
+   Cursed Door Effects
+   ============================================================ */
+.door-sprite.is-cursed {
+  border-color: #9b0eff;
+  box-shadow: 0 0 12px rgba(155, 14, 255, 0.4);
+  animation: curse-pulse 2s ease-in-out infinite;
+}
+
+@keyframes curse-pulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(155, 14, 255, 0.4); }
+  50%       { box-shadow: 0 0 24px rgba(155, 14, 255, 0.8); }
+}
+
+.curse-glyph {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
+  color: #9b0eff;
+  animation: glyph-spin 8s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes glyph-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.game-object.door.selected .door-sprite.is-cursed {
+  box-shadow: 0 0 20px rgba(155, 14, 255, 0.9);
+}
+
+/* ============================================================
+   ObjectDetail — Curse Panel & Metaprog Hint
+   ============================================================ */
+.is-cursed-panel {
+  border-color: #9b0eff !important;
+}
+
+.curse-badge {
+  font-size: 10px;
+  color: #9b0eff;
+  border: 1px solid #9b0eff;
+  padding: 2px 8px;
+  letter-spacing: 1px;
+  animation: curse-pulse 2s ease-in-out infinite;
+}
+
+.detail-description {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 8px;
+}
+
+.detail-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metaprog-hint {
+  background: rgba(155, 14, 255, 0.05);
+  border: 1px solid rgba(155, 14, 255, 0.3);
+  padding: 12px;
+  margin: 12px 0;
+}
+
+.metaprog-hint-title {
+  font-size: 11px;
+  color: #b060ff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.metaprog-sample {
+  font-size: 11px;
+  color: #b060ff;
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.4;
+}
+
+.status-label.level-danger {
+  border-left-color: #9b0eff;
+  background: rgba(155, 14, 255, 0.1);
+  color: #b060ff;
+}
+
+.status-label.level-warning {
+  border-left-color: #ff993a;
+}
+
+.status-label.level-ok {
+  border-left-color: #3aff8a;
+  background: rgba(58, 255, 138, 0.05);
+}
+
+.status-label.level-neutral {
+  border-left-color: var(--border-color);
+}
+
+.status-icon {
+  margin-right: 6px;
+}
+
+/* Schematic toggle */
+.schematic-toggle {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 4px 0;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: 100%;
+  transition: color 0.2s;
+}
+
+.schematic-toggle:hover {
+  color: var(--text-primary);
+}
+
+/* Empty state */
+.empty-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--text-secondary);
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 32px;
+  opacity: 0.3;
+}
+
+.empty-sub {
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+/* Disabled action buttons */
+.action-btn.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.action-label {
+  font-size: 13px;
+}
+
+/* ============================================================
+   MagicNote — New styles
+   ============================================================ */
+.note-title {
+  font-size: 12px;
+  color: var(--accent-color);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.note-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.save-snippet-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 2px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.save-snippet-btn:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+.history-hint {
+  font-size: 10px;
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.note-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0 0;
+}
+
+.keyboard-hint {
+  font-size: 10px;
+  color: var(--text-secondary);
+  opacity: 0.5;
+}
+
+.button-tactical.loading {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* ============================================================
+   Notebook
+   ============================================================ */
+.notebook {
+  flex-shrink: 0;
+}
+
+.notebook-toggle {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  transition: color 0.2s;
+}
+
+.notebook-toggle:hover {
+  color: var(--text-primary);
+}
+
+.notebook-count {
+  background: var(--accent-soft);
+  color: var(--accent-color);
+  border: 1px solid var(--accent-color);
+  font-size: 10px;
+  padding: 0 5px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.notebook-body {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.notebook-save {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.notebook-label-input,
+.notebook-code-input {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 6px 8px;
+  font-size: 11px;
+  width: 100%;
+  resize: none;
+}
+
+.notebook-label-input:focus,
+.notebook-code-input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.button-tactical.small {
+  padding: 4px 12px;
+  font-size: 11px;
+}
+
+.notebook-empty {
+  font-size: 11px;
+  color: var(--text-secondary);
+  opacity: 0.5;
+  text-align: center;
+}
+
+.notebook-entry {
+  border: 1px solid var(--border-color);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.notebook-entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notebook-entry-label {
+  font-size: 11px;
+  color: var(--accent-color);
+  truncate: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 160px;
+}
+
+.notebook-entry-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.nb-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 10px;
+  padding: 1px 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nb-btn.insert:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+.nb-btn.remove:hover {
+  border-color: #ff4444;
+  color: #ff4444;
+}
+
+.notebook-entry-code {
+  font-size: 10px;
+  color: #88ccff;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 60px;
+  overflow: hidden;
+}
