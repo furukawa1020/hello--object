@@ -8,11 +8,11 @@ module Engine
     end
 
     def add_object(obj)
-      @objects[obj.id] = obj
+      @objects[obj.id.to_s] = obj
     end
 
     def find_object(id)
-      @objects[id]
+      @objects[id.to_s]
     end
 
     def clear
