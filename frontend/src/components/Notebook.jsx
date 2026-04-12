@@ -4,11 +4,23 @@ import React, { useState } from 'react';
  * Notebook — ユーザーがコードスニペットを保存・管理できる機能
  * Phase 9 の核心機能
  */
-const Notebook = ({ onInsert }) => {
+const Notebook = ({ onInsert, pendingCode }) => {
   const [entries, setEntries] = useState([]);
   const [label, setLabel] = useState('');
   const [code, setCode] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+
+  // Auto-save when parent pushes a snippet
+  useEffect(() => {
+    if (!pendingCode) return;
+    const entry = {
+      id: Date.now(),
+      label: pendingCode.slice(0, 24) + (pendingCode.length > 24 ? '…' : ''),
+      code: pendingCode,
+    };
+    setEntries(prev => [entry, ...prev]);
+    setIsOpen(true); // open panel so user sees the save
+  }, [pendingCode]);
 
   const save = () => {
     if (!code.trim()) return;
