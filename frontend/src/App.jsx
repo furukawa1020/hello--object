@@ -109,6 +109,13 @@ function App() {
         lastResult={lastExecution.result}
         lastError={lastExecution.error}
       />
+
+      {showOnboarding && (
+        <Onboarding onComplete={() => {
+          setShowOnboarding(false);
+          localStorage.setItem('hasSeenOnboarding', 'true');
+        }} />
+      )}
     </div>
   );
 }
