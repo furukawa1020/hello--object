@@ -31,12 +31,21 @@ class WorldGate < GameObject
     RUBY
   end
 
-  def ui_labels
-    labels = []
-    labels << { icon: '🛡', text: "整合性: #{@integrity}%", level: @integrity > 50 ? 'ok' : 'warning' }
-    labels << { icon: '🔓', text: '認証済み', level: 'ok' } if @authorized
-    labels << { icon: '🚪', text: '開放中', level: 'ok' } if @open
-    labels
+  def ui_sprite
+    classes = ['world-gate-sprite']
+    classes << 'gate-authorized' if @authorized
+    
+    glow = @authorized ? "<div class='gate-auth-glow'></div>" : ""
+
+    "<div class='#{classes.join(' ')}' style='--integrity: #{@integrity}%'>
+      <div class='gate-bars'></div>
+      <div class='gate-integrity-bar'></div>
+      #{glow}
+    </div>"
+  end
+
+  def completed?
+    @open
   end
 
   def authorize(key = nil)
