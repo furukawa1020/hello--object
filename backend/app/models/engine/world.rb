@@ -9,6 +9,10 @@ module Engine
       @scene_metadata = {}
     end
 
+    def define_scene(id, label:, description:)
+      @scene_metadata[id.to_s] = { id: id.to_s, label: label, description: description }
+    end
+
     def add_object(obj)
       @objects[obj.id.to_s] = obj
     end
