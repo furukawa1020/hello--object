@@ -20,6 +20,7 @@ const idAlias = (obj) => {
     librarian_001:'librarian',
     gate_exit:     'gate',
     gatekeeper_001:'gatekeeper',
+    glitch_001:    'glitch',
   };
   return map[obj.id] || obj.id;
 };
@@ -92,6 +93,13 @@ const ACTIONS = {
       { label: '🚪 門を開く',     code: `${a}.open` },
     ];
   },
+  Glitch: (obj) => {
+    const a = idAlias(obj);
+    return [
+      { label: '💬 話しかける',  code: `${a}.talk` },
+      { label: '🛠 修正する',     code: `${a}.neutralize!` },
+    ];
+  },
 };
 
 // Friendly state labels
@@ -108,6 +116,8 @@ const getFriendlyState = (obj, allObjects) => {
   if (v.activated === true) labels.push({ icon: '⚡', text: '台座が起動中！', level: 'ok' });
   if (v.reflecting)         labels.push({ icon: '🔮', text: `映中: ${v.reflecting}`, level: 'neutral' });
   if (v.reflection_count > 0) labels.push({ icon: '◈', text: `${v.reflection_count}回反射`, level: 'neutral' });
+  if (v.active === true)    labels.push({ icon: '👾', text: '不安定なノイズ', level: 'danger' });
+  if (v.active === false)   labels.push({ icon: '🕊', text: '沈黙しています', level: 'ok' });
 
   if (v.items && v.items.length > 0) {
     const names = v.items.map(id => {
@@ -176,6 +186,17 @@ end`,
     if @authorized && @integrity <= 0
       @open = true
     end
+  end
+end`,
+  Glitch: `class Glitch < GameObject
+  def method_missing(m, *args)
+    if @active
+      raise "Glitch resists!"
+    end
+  end
+
+  def neutralize!
+    @active = false
   end
 end`,
 };

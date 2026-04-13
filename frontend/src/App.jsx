@@ -116,7 +116,6 @@ function App() {
           const updated = data.objects.find(o => o.id === selectedObject.id);
           if (updated) setSelectedObject(updated);
         }
-        }
       }
 
       if (data.instability !== undefined) {
