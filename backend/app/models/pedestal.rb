@@ -33,6 +33,13 @@ class Pedestal < GameObject
     RUBY
   end
 
+  def ui_labels
+    labels = []
+    labels << { icon: '⚡', text: '台座が起動中！', level: 'ok' } if @activated
+    labels << { icon: '📦', text: "配置: #{@holding}", level: 'neutral' } if @holding
+    labels
+  end
+
   def place(item)
     if @activated
       return "台座はすでに起動している。もう一度試す前に remove で取り外しなさい。"

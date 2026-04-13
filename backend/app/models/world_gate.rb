@@ -31,6 +31,14 @@ class WorldGate < GameObject
     RUBY
   end
 
+  def ui_labels
+    labels = []
+    labels << { icon: '🛡', text: "整合性: #{@integrity}%", level: @integrity > 50 ? 'ok' : 'warning' }
+    labels << { icon: '🔓', text: '認証済み', level: 'ok' } if @authorized
+    labels << { icon: '🚪', text: '開放中', level: 'ok' } if @open
+    labels
+  end
+
   def authorize(key = nil)
     if key == "ADMIN_ACCESS"
       @authorized = true
