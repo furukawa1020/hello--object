@@ -5,7 +5,31 @@ class Glitch < GameObject
     super(id: id, name: name, description: description)
     @integrity = 100
     @active = true
-    @defenses = ["standard_calls", "direct_assignment"]
+    @authorized = false
+  end
+
+  def ui_actions
+    a = 'glitch'
+    [
+      { label: '💬 話しかける',  code: "#{a}.talk" },
+      { label: '🛠 修正する',     code: "#{a}.neutralize!" },
+    ]
+  end
+
+  def ui_schematic
+    <<~RUBY
+      class Glitch < GameObject
+        def method_missing(m, *args)
+          if @active
+            raise "Glitch resists!"
+          end
+        end
+
+        def neutralize!
+          @active = false
+        end
+      end
+    RUBY
   end
 
   # method_missing を使って、特定のメソッド以外をすべて弾く（ノイズを返す）
@@ -41,6 +65,7 @@ class Glitch < GameObject
     s = super
     s[:variables][:active] = @active
     s[:variables][:integrity] = @integrity
+    s[:variables][:authorized] = @authorized
     s
   end
 end
