@@ -31,7 +31,7 @@ RUN apt-get update -qq && \
 COPY --from=build /usr/local/bundle /usr/local/bundle
 COPY --from=build /rails /rails
 # Copy frontend build from Stage 1 into backend public folder
-COPY --from=frontend-build /app/backend/public /rails/public
+COPY --from=frontend-build /app/dist /rails/public
 
 RUN useradd rails --create-home --shell /bin/bash && \
     chown -R rails:rails db log storage tmp

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap');
+
 :root {
   /* Tactical Alchemist Palette */
   --bg-color: #0f1115;
@@ -18,8 +20,6 @@
   --corner-radius: 2px; /* Sharp corners */
   --grid-size: 20px;
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap');
 
 * {
   box-sizing: border-box;
