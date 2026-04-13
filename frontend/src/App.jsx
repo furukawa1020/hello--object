@@ -13,6 +13,7 @@ import StatsBar from './components/StatsBar';
 import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
 import useLocalStorage from './hooks/useLocalStorage';
 import { sounds, eventSound } from './utils/sounds';
+import ToastSystem from './components/ToastSystem';
 
 const isVictory = (objects) => {
   const d = objects.find(o => o.id === 'cursed_door');
@@ -31,7 +32,9 @@ function App() {
   const [notebookCode, setNotebookCode]     = useState('');
   const [showVictory, setShowVictory]       = useState(false);
   const [stats, setStats]                   = useState({ executions: 0, events: 0, objectsInteracted: new Set(), errors: 0 });
+  const [instability, setInstability]       = useState(0);
   const magicNoteRef = useRef(null);
+  const toastRef = useRef(null);
   const storage = useLocalStorage();
 
   // Restore persisted data on mount
@@ -113,9 +116,24 @@ function App() {
           const updated = data.objects.find(o => o.id === selectedObject.id);
           if (updated) setSelectedObject(updated);
         }
-        if (!showVictory && isVictory(data.objects)) {
-          setTimeout(() => setShowVictory(true), 700);
         }
+      }
+
+      if (data.instability !== undefined) {
+        setInstability(data.instability);
+        if (data.instability > 20) {
+          toastRef.current?.add('システム整合性が低下しています。グリッチに注意してください。', 'warning');
+        }
+      }
+
+      // Achievements
+      if (code.includes('class ') && !localStorage.getItem('ach_monkey')) {
+        toastRef.current?.add('Achievement: モンキーパッチの使い手', 'achievement');
+        localStorage.setItem('ach_monkey', 'true');
+      }
+      if (code.includes('singleton_class') && !localStorage.getItem('ach_singleton')) {
+        toastRef.current?.add('Achievement: 特異クラスの探求者', 'achievement');
+        localStorage.setItem('ach_singleton', 'true');
       }
     } catch (e) {
       console.error('execute failed', e);
@@ -138,7 +156,10 @@ function App() {
         setLastExecution({ result: null, error: null });
         setShowVictory(false);
         setStats({ executions: 0, events: 0, objectsInteracted: new Set(), errors: 0 });
+        setInstability(0);
         storage.clear();
+        localStorage.removeItem('ach_monkey');
+        localStorage.removeItem('ach_singleton');
       }
     } catch (e) { console.error('reset failed', e); }
   };
@@ -202,9 +223,10 @@ function App() {
   useKeyboardShortcuts(shortcuts);
 
   const statsDisplay = { ...stats, objectsInteracted: stats.objectsInteracted.size };
+  const glitchLevel = Math.min(Math.floor(instability / 10), 5);
 
   return (
-    <div className="app-container">
+    <div className={`app-container instability-level-${glitchLevel}`}>
       <header className="app-header">
         <div className="app-brand">
           <h1>hello, <span className="brand-accent">object</span></h1>
@@ -265,6 +287,7 @@ function App() {
           localStorage.setItem('hasSeenOnboarding', 'true');
         }} />
       )}
+      <ToastSystem ref={toastRef} />
     </div>
   );
 }
