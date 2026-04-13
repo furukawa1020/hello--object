@@ -19,7 +19,16 @@ class Door < GameObject
   def ui_schematic
     <<~RUBY
       class Door < GameObject
-        def unlock
+        def ui_labels
+    labels = []
+    labels << { icon: '⛧', text: '強力な呪いがかかっています', level: 'danger' } if @cursed
+    labels << { icon: '🔒', text: '鍵がかかっています', level: 'warning' } if @locked
+    labels << { icon: '🔓', text: '鍵は開いています', level: 'ok' } if !@locked
+    labels << { icon: '🚪', text: @open ? '扉が開いています' : '扉は閉じています', level: @open ? 'ok' : 'neutral' }
+    labels
+  end
+
+  def unlock
           if @cursed
             raise "呪われた扉は開けられない"
           end

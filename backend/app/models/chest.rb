@@ -29,6 +29,16 @@ class Chest < GameObject
     RUBY
   end
 
+  def ui_labels
+    labels = []
+    labels << { icon: '🔒', text: '鍵がかかっています', level: 'warning' } if @locked
+    labels << { icon: '🔓', text: '鍵は開いています', level: 'ok' } if !@locked
+    if @items.any?
+      labels << { icon: '📦', text: "中身: #{@items.map(&:name).join(', ')}", level: 'neutral' }
+    end
+    labels
+  end
+
   def unlock(key_obj = nil)
     if key_obj.is_a?(Key)
       @locked = false

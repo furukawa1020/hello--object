@@ -33,7 +33,9 @@ class GameObject
       notes: @notes,
       scene_id: @scene_id,
       actions: ui_actions,
-      schematic: ui_schematic
+      schematic: ui_schematic,
+      labels: ui_labels,
+      alias_name: WorldManager::ALIASES.key(@id) || @id
     }
   end
 
@@ -42,12 +44,17 @@ class GameObject
     "#{self.class.name} '#{@name}' が具現化されました。"
   end
 
-  # Default actions - can be overridden in subclasses
+  # Default actions
   def ui_actions
     []
   end
 
-  # Default schematic - can be overridden
+  # Default labels describing current state for UI (moves from JS)
+  def ui_labels
+    []
+  end
+
+  # Default schematic
   def ui_schematic
     nil
   end
