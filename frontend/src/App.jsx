@@ -9,7 +9,6 @@ import Onboarding from './components/Onboarding';
 import Notebook from './components/Notebook';
 import EventLog from './components/EventLog';
 import VictoryScreen from './components/VictoryScreen';
-import StatsBar from './components/StatsBar';
 import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
 import useLocalStorage from './hooks/useLocalStorage';
 import { sounds, eventSound } from './utils/sounds';
@@ -27,6 +26,7 @@ function App() {
   const [selectedObject, setSelectedObject] = useState(null);
   const [history, setHistory]               = useState([]);
   const [allEvents, setAllEvents]           = useState([]);
+  const [naviMessage, setNaviMessage]       = useState(null);
   const [loading, setLoading]               = useState(true);
   const [lastExecution, setLastExecution]   = useState({ result: null, error: null });
   const [actionCode, setActionCode]         = useState('');
@@ -65,6 +65,7 @@ function App() {
         if (data.scenes) setScenes(data.scenes);
         if (data.tutorial) setTutorial(data.tutorial);
         if (data.is_victory) setShowVictory(true);
+        if (data.navi_message) setNaviMessage(data.navi_message);
       }
     } catch (e) { console.error('fetchState failed', e); }
     finally { setLoading(false); }
@@ -152,6 +153,10 @@ function App() {
 
       if (data.is_victory) {
         setShowVictory(true);
+      }
+
+      if (data.navi_message) {
+        setNaviMessage(data.navi_message);
       }
     } catch (e) {
       console.error('execute failed', e);
@@ -255,7 +260,12 @@ function App() {
           <h1>hello, <span className="brand-accent">object</span></h1>
           <span className="app-subtitle">Ruby Interactive World</span>
         </div>
-        <StatsBar stats={statsDisplay} />
+        <div className="stats-bar">
+          <span>Executions: {statsDisplay.executions}</span>
+          <span>Events: {statsDisplay.events}</span>
+          <span>Interacted: {statsDisplay.objectsInteracted}</span>
+          <span>Errors: {statsDisplay.errors}</span>
+        </div>
         <div className="header-actions">
           <button onClick={handleExportJourney} className="export-btn">⎙ Export Journey</button>
           <button onClick={handleReset} className="reset-btn">⟳ Reset</button>
@@ -295,14 +305,11 @@ function App() {
             history={history}
             onRerun={setActionCode}
           />
+          <div className="main-viewport">
+            <NaviGuide naviMessage={naviMessage} />
+          </div>
         </aside>
       </main>
-
-      <NaviGuide
-        currentObject={selectedObject}
-        lastResult={lastExecution.result}
-        lastError={lastExecution.error}
-      />
 
       {showVictory && <VictoryScreen onDismiss={() => setShowVictory(false)} />}
       {showOnboarding && (

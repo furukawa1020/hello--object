@@ -11,7 +11,8 @@ class ExecutionController < ApplicationController
       objects: WorldManager.all_objects.map(&:state),
       scenes: WorldManager.world.scene_metadata.values,
       is_victory: WorldManager.world.victory?,
-      tutorial: WorldManager.world.tutorial_steps
+      tutorial: WorldManager.world.tutorial_steps,
+      navi_message: Engine::Navi.generate_message(WorldManager.world)
     }
   end
 
@@ -23,7 +24,8 @@ class ExecutionController < ApplicationController
       objects: WorldManager.all_objects.map(&:state),
       scenes: WorldManager.world.scene_metadata.values,
       is_victory: WorldManager.world.victory?,
-      tutorial: WorldManager.world.tutorial_steps
+      tutorial: WorldManager.world.tutorial_steps,
+      navi_message: Engine::Navi.generate_message(WorldManager.world)
     }
   end
 
