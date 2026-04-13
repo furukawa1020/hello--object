@@ -21,6 +21,7 @@
         formatted_result: format_result(result),
         result_type: result.class.name,
         result_color: color_for_type(result),
+        code_analysis: analyze_code_pattern(code),
         events: events,
         achievements: achievements,
         objects: WorldManager.all_objects.map(&:state),
@@ -126,8 +127,20 @@
     when Integer, Float        then '#60d0ff'
     when String                 then '#8aff80'
     when Array, Hash            then '#c8a0ff'
-    when NilClass              then '#888888'
     else '#ffcc44'
+    end
+  end
+
+  def self.analyze_code_pattern(code)
+    return nil if code.blank?
+    case code
+    when /^\s*class\s+\w+.*def\s+\w+/ then { label: '🔓 クラス再定義', color: '#b060ff' }
+    when /^\s*class\s+\w+/            then { label: '📐 クラス定義', color: '#c8a0ff' }
+    when /^\s*def\s+\w+/              then { label: '🔧 メソッド定義', color: '#60d0ff' }
+    when /\w+\.\w+\.\w+/               then { label: '⛓ メソッドチェーン', color: '#ffcc44' }
+    when /\w+\.\w+/                    then { label: '📞 メソッド呼び出し', color: '#8aff80' }
+    when /\w+\s*=\s*/                  then { label: '📦 変数への代入', color: '#ffb86c' }
+    else { label: '🔢 式', color: '#88ccff' }
     end
   end
 end
