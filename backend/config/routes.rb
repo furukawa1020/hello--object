@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
   post 'execute', to: 'execution#execute'
+  post 'analyze', to: 'execution#analyze'
   get  'state',   to: 'execution#state'
   post 'reset',   to: 'execution#reset'
   get  'methods', to: 'execution#methods_for'
