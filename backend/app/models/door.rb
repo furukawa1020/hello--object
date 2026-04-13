@@ -6,6 +6,36 @@ class Door < GameObject
     @cursed = cursed
   end
 
+  def ui_actions
+    a = WorldManager::ALIASES.key(@id) || @id
+    [
+      { label: `🔓 鍵を開ける`,  code: "#{a}.unlock",  disabled: !@locked },
+      { label: `🚪 扉を開く`,    code: "#{a}.open",    disabled: @locked },
+      { label: `🔒 鍵をかける`,  code: "#{a}.lock",    disabled: @locked },
+      { label: `🚪 扉を閉める`,  code: "#{a}.close",   disabled: !@open },
+    ]
+  end
+
+  def ui_schematic
+    <<~RUBY
+      class Door < GameObject
+        def unlock
+          if @cursed
+            raise "呪われた扉は開けられない"
+          end
+          @locked = false
+        end
+
+        def open
+          if @cursed || @locked
+            raise "開かない"
+          end
+          @open = true
+        end
+      end
+    RUBY
+  end
+
   def unlock
     if @cursed
       raise "扉には強力な呪印が刻まれており、いかなる鍵も受け付けません。物理的な仕組みを超越した力が必要です。"
