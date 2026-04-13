@@ -2,8 +2,11 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 24px;
-  gap: 24px;
+  padding: clamp(24px, 5vh, 48px);
+  gap: clamp(16px, 3vh, 32px);
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-dark);
 }
 
 .app-header {
@@ -11,7 +14,9 @@
   justify-content: space-between;
   align-items: center;
   border-bottom: 2px solid var(--border-color);
-  padding-bottom: 12px;
+  padding-bottom: 20px;
+  margin-bottom: 8px;
+  z-index: 10;
 }
 
 .header-actions {
@@ -1978,6 +1983,64 @@ kbd {
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: var(--border-color) transparent;
+}
+
+/* ============================================================
+   Spatial Aesthetics: UI Corners & Frames
+   ============================================================ */
+.ui-corner {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--accent-soft);
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.top-left {
+  top: 16px;
+  left: 16px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.top-right {
+  top: 16px;
+  right: 16px;
+  border-left: none;
+  border-bottom: none;
+}
+
+.bottom-left {
+  bottom: 16px;
+  left: 16px;
+  border-right: none;
+  border-top: none;
+}
+
+.bottom-right {
+  bottom: 16px;
+  right: 16px;
+  border-left: none;
+  border-top: none;
+}
+
+.ui-corner::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: var(--accent-color);
+}
+
+.top-left::after { top: -3px; left: -3px; }
+.top-right::after { top: -3px; right: -3px; }
+.bottom-left::after { bottom: -3px; left: -3px; }
+.bottom-right::after { bottom: -3px; right: -3px; }
+
+.main-layout {
+  gap: clamp(24px, 4vw, 48px);
 }
 
 /* ============================================================
