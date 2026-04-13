@@ -270,7 +270,7 @@ end`}</pre>
       {/* Actions */}
       {actions.length > 0 && (
         <div className="action-section">
-          <h4>Actions</h4>
+          <h4 className="label-tech">Actions</h4>
           <div className="action-buttons">
             {actions.map(action => (
               <button
@@ -280,7 +280,7 @@ end`}</pre>
                 disabled={action.disabled}
               >
                 <span className="action-label">{action.label}</span>
-                <span className="action-code-hint">{action.code}</span>
+                <span className="action-code-hint mono">{action.code}</span>
               </button>
             ))}
           </div>
