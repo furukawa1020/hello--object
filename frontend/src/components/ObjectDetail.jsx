@@ -1,29 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
-// Map object ID to the alias used in the evaluator registry
-const idAlias = (obj) => {
-  const map = {
-    door_001:    'door',
-    chest_001:   'chest',
-    key_001:     'key',
-    tome_001:    'tome',
-    tome_003:    'tome_003',
-    tome_004:    'tome_004',
-    tome_005:    'tome_005',
-    sage_001:    'sage',
-    mirror_001:  'mirror',
-    mirror_002:  'mirror_002',
-    cursed_door: 'cursed_door',
-    tome_002:    'forbidden_tome',
-    warlock_001: 'warlock',
-    pedestal_001:'pedestal',
-    librarian_001:'librarian',
-    gate_exit:     'gate',
-    gatekeeper_001:'gatekeeper',
-    glitch_001:    'glitch',
-  };
-  return map[obj.id] || obj.id;
-};
+// Alias used in the ruby evaluator registry
+const idAlias = (obj) => obj.alias_name || obj.id;
 
 // Action templates per class (DEPRECATED - Moved to Ruby Backend)
 const ACTIONS = {};
@@ -53,13 +31,9 @@ const ObjectDetail = ({ object, onAction, objects }) => {
     );
   }
 
-  const backendActions = object.actions || [];
-  const actions = backendActions.length > 0 
-    ? backendActions 
-    : (ACTIONS[object.class_name] || (() => []))(object);
-  
-  const stateLabels = getFriendlyState(object, objects || []);
-  const schematic = object.schematic || SCHEMATICS[object.class_name];
+  const actions = object.actions || [];
+  const stateLabels = object.labels || [];
+  const schematic = object.schematic;
   const isCursed = object.variables.cursed;
 
   return (
