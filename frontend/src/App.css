@@ -80,12 +80,14 @@
 }
 
 .status-badge {
-  font-size: 11px;
+  font-family: var(--font-mono);
+  font-size: 10px;
   padding: 2px 10px;
   background: var(--accent-soft);
   color: var(--accent-color);
   border: 1px solid var(--accent-color);
   text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .main-layout {
@@ -327,15 +329,21 @@
 }
 
 .detail-header h3 {
-  font-size: 18px;
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 0.5px;
   margin-bottom: 4px;
 }
 
 .class-tag {
-  font-size: 10px;
-  border: 1px solid var(--border-color);
-  padding: 1px 6px;
-  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  background: var(--accent-soft);
+  color: var(--accent-color);
+  padding: 2px 8px;
+  border-radius: 2px;
+  text-transform: uppercase;
 }
 
 /* Object Detail Beginner Elements */
@@ -391,7 +399,7 @@
 .action-code-hint {
   font-size: 10px;
   color: var(--text-secondary);
-  font-family: var(--font-main);
+  font-family: var(--font-mono);
   margin-top: 4px;
 }
 
