@@ -3,7 +3,6 @@ import './App.css';
 import MagicNote from './components/MagicNote';
 import WorldView from './components/WorldView';
 import ObjectDetail from './components/ObjectDetail';
-import HistoryPanel from './components/HistoryPanel';
 import NaviGuide from './components/NaviGuide';
 import Onboarding from './components/Onboarding';
 import Notebook from './components/Notebook';
@@ -110,12 +109,14 @@ function App() {
 
       setHistory(prev => [{
         code,
-        result:     data.result,
+        result: data.result,
+        formattedResult: data.formatted_result,
         resultType: data.result_type,
-        error:      data.error,
-        events:     data.events || [],
-        timestamp:  new Date().toLocaleTimeString(),
-      }, ...prev.slice(0, 49)]);
+        resultColor: data.result_color,
+        events: data.events,
+        error: data.error,
+        timestamp: new Date().toLocaleTimeString()
+      }, ...prev].slice(0, 49));
 
       if (data.objects) {
         setObjects(data.objects);
@@ -311,10 +312,24 @@ function App() {
               ))}
             </div>
           </div>
-          <HistoryPanel
-            history={history}
-            onRerun={setActionCode}
-          />
+          <div className="history-panel-compact">
+            <h4 className="label-tech">Execution Log (formatted by Ruby)</h4>
+            <div className="history-list-compact">
+              {history.length === 0 && <div className="history-empty">集積されたログはありません</div>}
+              {history.map((item, i) => (
+                <div key={i} className={`history-entry ${item.error ? 'err' : 'ok'}`} onClick={() => setActionCode(item.code)}>
+                  <div className="history-code-line">{item.code}</div>
+                  {!item.error ? (
+                    <div className="history-result-line" style={{ color: item.resultColor }}>
+                      =&gt; {item.formattedResult}
+                    </div>
+                  ) : (
+                    <div className="history-error-line">✗ {item.error}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
           <div className="main-viewport">
             <NaviGuide naviMessage={naviMessage} />
           </div>
