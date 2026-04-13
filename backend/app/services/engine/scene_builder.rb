@@ -58,5 +58,9 @@ module Engine
     def world_gate(id, name, description, **vars)
       object(:world_gate, id, name, description, **vars)
     end
+
+    def glitch(id, name, description, **vars)
+      object(:glitch, id, name, description, **vars)
+    end
   end
 end
