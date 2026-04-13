@@ -16,7 +16,7 @@ ENV RAILS_ENV="production" \
 
 FROM base as build
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git pkg-config
+    apt-get install --no-install-recommends -y build-essential git pkg-config libyaml-dev libsqlite3-dev
 COPY backend/Gemfile backend/Gemfile.lock ./
 RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
