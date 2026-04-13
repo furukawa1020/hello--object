@@ -1,3 +1,4 @@
+class RubyEvaluator
   @instability = 0
 
   def self.evaluate(code)
