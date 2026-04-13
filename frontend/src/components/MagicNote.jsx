@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import CodeAnalyzer from './CodeAnalyzer';
 
 const highlight = (code) => {
   if (!code) return '';
