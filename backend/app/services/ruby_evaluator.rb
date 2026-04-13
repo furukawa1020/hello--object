@@ -13,18 +13,22 @@
       result = context.instance_eval(code)
 
       events = Engine::EventRecorder.collect
+      achievements = Engine::AchievementManager.analyze_execution(code, context)
 
       {
         success: true,
         result: serialize_result(result),
         result_type: result.class.name,
         events: events,
+        achievements: achievements,
         objects: WorldManager.all_objects.map(&:state),
         instability: @instability
       }
     rescue StandardError, ScriptError => e
       @instability += 2
+      achievements = Engine::AchievementManager.analyze_execution(code, nil)
       friendly_msg = case e
+                    # ...
                     when NoMethodError
                       method_name = e.message.match(/undefined method [`'](.+)['`] for/)&.[](1)
                       # ... suggestions logic ...
