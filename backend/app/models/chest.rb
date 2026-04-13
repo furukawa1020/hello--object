@@ -39,6 +39,22 @@ class Chest < GameObject
     labels
   end
 
+  def ui_sprite
+    classes = ['chest-sprite']
+    classes << (@locked ? 'is-locked' : 'is-unlocked')
+    
+    lid = !@locked ? "<div class='chest-open-lid'></div>" : ""
+    
+    "<div class='#{classes.join(' ')}'>
+      <div class='chest-latch'></div>
+      #{lid}
+    </div>"
+  end
+
+  def completed?
+    !@locked
+  end
+
   def unlock(key_obj = nil)
     if key_obj.is_a?(Key)
       @locked = false
