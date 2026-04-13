@@ -7,7 +7,6 @@ import HistoryPanel from './components/HistoryPanel';
 import NaviGuide from './components/NaviGuide';
 import Onboarding from './components/Onboarding';
 import Notebook from './components/Notebook';
-import EventLog from './components/EventLog';
 import VictoryScreen from './components/VictoryScreen';
 import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
 import useLocalStorage from './hooks/useLocalStorage';
@@ -300,7 +299,18 @@ function App() {
             objects={objects}
           />
           <Notebook onInsert={setActionCode} pendingCode={notebookCode} />
-          <EventLog events={allEvents} />
+          <div className="event-stream-container">
+            <h4 className="label-tech">Event Stream (from Ruby)</h4>
+            <div className="event-list-compact">
+              {allEvents.slice(-10).reverse().map((ev, i) => (
+                <div key={i} className="event-entry-small" style={{ borderLeft: `2px solid ${ev.meta.color}` }}>
+                  <span className="ev-icon">{ev.meta.icon}</span>
+                  <span className="ev-text">{ev.meta.text}</span>
+                  {ev.data?.object_id && <span className="ev-id">{ev.data.object_id}</span>}
+                </div>
+              ))}
+            </div>
+          </div>
           <HistoryPanel
             history={history}
             onRerun={setActionCode}
