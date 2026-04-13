@@ -32,11 +32,20 @@ class Glitch < GameObject
     RUBY
   end
 
-  def ui_labels
-    labels = []
-    labels << { icon: '👾', text: '不安定なノイズ', level: 'danger' } if @active
-    labels << { icon: '🕊', text: '沈黙しています', level: 'ok' } if !@active
-    labels
+  def ui_sprite
+    classes = ['glitch-sprite']
+    classes << (@active ? 'is-active' : 'is-fixed')
+    
+    noise = @active ? "<div class='glitch-noise-overlay'></div>" : ""
+
+    "<div class='#{classes.join(' ')}'>
+      <div class='glitch-core'></div>
+      #{noise}
+    </div>"
+  end
+
+  def completed?
+    !@active
   end
 
   # method_missing を使って、特定のメソッド以外をすべて弾く（ノイズを返す）
