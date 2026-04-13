@@ -305,11 +305,43 @@ function App() {
         </div>
 
         <aside className="right-sidebar">
-          <ObjectDetail
-            object={selectedObject}
-            onAction={setActionCode}
-            objects={objects}
-          />
+          {selectedObject ? (
+            <div className="object-detail tactical-panel">
+              <div className="detail-header">
+                <h3>{selectedObject.name}</h3>
+                <span className="class-tag">{selectedObject.class_name}</span>
+              </div>
+              <p className="detail-description">{selectedObject.description}</p>
+              
+              <div className="status-labels">
+                {selectedObject.labels?.map((l, i) => (
+                  <div key={i} className={`status-label level-${l.level}`}>
+                    <span className="status-icon">{l.icon}</span> {l.text}
+                  </div>
+                ))}
+              </div>
+
+              <div className="action-buttons">
+                {selectedObject.actions?.map((a, i) => (
+                  <button key={i} className="action-btn" onClick={() => setActionCode(a.code)} disabled={a.disabled}>
+                    <span className="action-label">{a.label}</span>
+                    <span className="action-code-hint">{a.code}</span>
+                  </button>
+                ))}
+              </div>
+
+              {selectedObject.schematic && (
+                <div className="schematic-section">
+                  <h4>Class Schematic</h4>
+                  <pre className="schematic-code">{selectedObject.schematic}</pre>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="detail-empty tactical-panel">
+              <p>Observe the world to extract its essence.</p>
+            </div>
+          )}
           
           {/* Consolidated Notebook */}
           <div className={`notebook-compact tactical-panel ${isNotebookOpen ? 'open' : ''}`}>
@@ -358,8 +390,14 @@ function App() {
               ))}
             </div>
           </div>
-          <div className="main-viewport">
-            <NaviGuide naviMessage={naviMessage} />
+          
+          {/* Navi Guide (Ruby-driven) */}
+          <div className="navi-guide tactical-panel">
+            <div className="navi-character"><div className="navi-eye" /></div>
+            <div className="navi-content">
+              <div className="navi-header">NAVI SYSTEM v2.0 (Ruby Engine)</div>
+              <div className="navi-text">{naviMessage || "こんにちは。私はこの世界の観測者です。"}</div>
+            </div>
           </div>
         </aside>
       </main>
