@@ -32,6 +32,13 @@ class Glitch < GameObject
     RUBY
   end
 
+  def ui_labels
+    labels = []
+    labels << { icon: '👾', text: '不安定なノイズ', level: 'danger' } if @active
+    labels << { icon: '🕊', text: '沈黙しています', level: 'ok' } if !@active
+    labels
+  end
+
   # method_missing を使って、特定のメソッド以外をすべて弾く（ノイズを返す）
   def method_missing(m, *args, &block)
     if @active
