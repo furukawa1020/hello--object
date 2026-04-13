@@ -18,7 +18,9 @@
       {
         success: true,
         result: serialize_result(result),
+        formatted_result: format_result(result),
         result_type: result.class.name,
+        result_color: color_for_type(result),
         events: events,
         achievements: achievements,
         objects: WorldManager.all_objects.map(&:state),
@@ -105,6 +107,27 @@
 
     def respond_to_missing?(name, include_private = false)
       @registry.key?(name.to_s) || super
+    end
+  end
+
+  def self.format_result(val)
+    case val
+    when GameObject then "#<#{val.class.name} \"#{val.name}\">"
+    when Array      then "[#{val.map { |v| v.respond_to?(:name) ? v.name : v.inspect }.join(', ')}]"
+    when String     then val.include?("\n") ? val : val.inspect
+    when NilClass   then "nil"
+    else val.inspect
+    end
+  end
+
+  def self.color_for_type(val)
+    case val
+    when TrueClass, FalseClass then '#ff993a'
+    when Integer, Float        then '#60d0ff'
+    when String                 then '#8aff80'
+    when Array, Hash            then '#c8a0ff'
+    when NilClass              then '#888888'
+    else '#ffcc44'
     end
   end
 end
