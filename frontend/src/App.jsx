@@ -22,6 +22,7 @@ const isVictory = (objects) => {
 
 function App() {
   const [objects, setObjects]               = useState([]);
+  const [scenes, setScenes]                 = useState([]);
   const [selectedObject, setSelectedObject] = useState(null);
   const [history, setHistory]               = useState([]);
   const [allEvents, setAllEvents]           = useState([]);
@@ -58,7 +59,10 @@ function App() {
     try {
       const r = await fetch('http://localhost:3000/state');
       const data = await r.json();
-      if (data.success) setObjects(data.objects);
+      if (data.success) {
+        setObjects(data.objects);
+        if (data.scenes) setScenes(data.scenes);
+      }
     } catch (e) { console.error('fetchState failed', e); }
     finally { setLoading(false); }
   };
@@ -133,6 +137,10 @@ function App() {
             localStorage.setItem(ach.id, 'true');
           }
         });
+      }
+
+      if (data.scenes) {
+        setScenes(data.scenes);
       }
     } catch (e) {
       console.error('execute failed', e);
@@ -251,6 +259,7 @@ function App() {
         <div className="left-column">
           <WorldView
             objects={objects}
+            scenes={scenes}
             onSelect={handleSelectObject}
             selectedId={selectedObject?.id}
           />

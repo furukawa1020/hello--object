@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { SCENE_MEMBERSHIP, SCENE_LABELS, SCENE_DESCRIPTIONS } from '../constants/scenes';
 
 // ── Sprite components ─────────────────────────────────────
 const DoorSprite = ({ obj }) => (
@@ -106,19 +105,23 @@ const isCompleted = (obj) => {
 };
 
 // ── WorldView ─────────────────────────────────────────────
-const WorldView = ({ objects, onSelect, selectedId }) => {
-  const [activeScene, setActiveScene] = useState('the_first_room');
+const WorldView = ({ objects, scenes, onSelect, selectedId }) => {
+  const [activeScene, setActiveScene] = useState(null);
   const [hoveredId, setHoveredId]    = useState(null);
   const [transitioning, setTransitioning] = useState(false);
 
-  const sceneIds = Object.keys(SCENE_LABELS);
+  // Initialize activeScene once scenes are loaded
+  React.useEffect(() => {
+    if (scenes.length > 0 && !activeScene) {
+      setActiveScene(scenes[0].id);
+    }
+  }, [scenes, activeScene]);
 
   const sceneObjects = {};
   objects.forEach(obj => {
-    // If object is not in the static map, it's a dynamic/materialized object.
-    // We treat it as belonging to the "current active scene" so it appears where the player is.
-    const staticScene = SCENE_MEMBERSHIP[obj.id];
-    const scene = staticScene || activeScene;
+    // Priority 1: Object's own scene_id from backend
+    // Priority 2: Fallback to first scene
+    const scene = obj.scene_id || (scenes[0]?.id || 'default');
     if (!sceneObjects[scene]) sceneObjects[scene] = [];
     sceneObjects[scene].push(obj);
   });
@@ -134,22 +137,23 @@ const WorldView = ({ objects, onSelect, selectedId }) => {
 
   const currentObjects = sceneObjects[activeScene] || [];
   const hoveredObj    = objects.find(o => o.id === hoveredId);
+  const activeSceneData = scenes.find(s => s.id === activeScene) || {};
 
   return (
     <div className="world-view tactical-panel">
       {/* Scene tabs */}
       <div className="world-header">
         <div className="scene-tabs">
-          {sceneIds.map(sid => {
-            const count     = (sceneObjects[sid] || []).length;
-            const completed = (sceneObjects[sid] || []).filter(isCompleted).length;
+          {scenes.map(s => {
+            const count     = (sceneObjects[s.id] || []).length;
+            const completed = (sceneObjects[s.id] || []).filter(isCompleted).length;
             return (
               <button
-                key={sid}
-                className={`scene-tab ${activeScene === sid ? 'active' : ''}`}
-                onClick={() => switchScene(sid)}
+                key={s.id}
+                className={`scene-tab ${activeScene === s.id ? 'active' : ''}`}
+                onClick={() => switchScene(s.id)}
               >
-                {SCENE_LABELS[sid]}
+                {s.label}
                 <span className="scene-tab-count">
                   {completed}/{count}
                 </span>
@@ -157,7 +161,7 @@ const WorldView = ({ objects, onSelect, selectedId }) => {
             );
           })}
         </div>
-        <span className="scene-id-label">{SCENE_DESCRIPTIONS[activeScene]}</span>
+        <span className="scene-id-label">{activeSceneData.description}</span>
       </div>
 
       {/* Objects + tooltip */}
