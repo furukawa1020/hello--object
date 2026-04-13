@@ -33,6 +33,13 @@ class Mirror < GameObject
     RUBY
   end
 
+  def ui_labels
+    labels = []
+    labels << { icon: '🔮', text: "反映中: #{@reflecting}", level: 'neutral' } if @reflecting
+    labels << { icon: '◈', text: "#{@reflection_count}回反射", level: 'neutral' } if @reflection_count > 0
+    labels
+  end
+
   def reflect(target = nil)
     if target.nil?
       @reflecting = nil
