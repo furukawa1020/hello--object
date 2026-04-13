@@ -23,7 +23,9 @@
         achievements: achievements,
         objects: WorldManager.all_objects.map(&:state),
         scenes: WorldManager.world.scene_metadata.values,
-        instability: @instability
+        instability: @instability,
+        is_victory: WorldManager.world.victory?,
+        tutorial: WorldManager.world.tutorial_steps
       }
     rescue StandardError, ScriptError => e
       @instability += 2

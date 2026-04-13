@@ -9,6 +9,36 @@ module Engine
       @scene_metadata = {}
     end
 
+    def victory?
+      # Opening the cursed door is the win condition
+      d = find_object('cursed_door')
+      d && d.instance_variable_get(:@open) == true
+    end
+
+    # Global tutorial steps for the Onboarding system
+    def tutorial_steps
+      [
+        {
+          id: 'intro',
+          title: '真理への階梯へようこそ',
+          content: 'ここは Ruby が支配する「実体化された世界」です。目の前のオブジェクトは、すべて Ruby のクラスから生成されています。',
+          target: '.world-view'
+        },
+        {
+          id: 'interact',
+          title: 'オブジェクトとの対話',
+          content: 'オブジェクトを選択して Actions ボタンを押すか、直接コードを書き込むことで世界に干渉できます。',
+          target: '.object-detail'
+        },
+        {
+          id: 'ruby',
+          title: 'Ruby の力',
+          content: '魔法の源は Ruby そのものです。`door.open` と唱えれば道が開けるでしょう。呪われたオブジェクトはクラスごと書き換えてください。',
+          target: '.editor-section'
+        }
+      ]
+    end
+
     def define_scene(id, label:, description:)
       @scene_metadata[id.to_s] = { id: id.to_s, label: label, description: description }
     end

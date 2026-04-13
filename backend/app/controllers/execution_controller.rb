@@ -8,7 +8,10 @@ class ExecutionController < ApplicationController
   def state
     render json: {
       success: true,
-      objects: WorldManager.all_objects.map(&:state)
+      objects: WorldManager.all_objects.map(&:state),
+      scenes: WorldManager.world.scene_metadata.values,
+      is_victory: WorldManager.world.victory?,
+      tutorial: WorldManager.world.tutorial_steps
     }
   end
 
@@ -17,7 +20,10 @@ class ExecutionController < ApplicationController
     render json: {
       success: true,
       message: "World has been restored to its original state.",
-      objects: WorldManager.all_objects.map(&:state)
+      objects: WorldManager.all_objects.map(&:state),
+      scenes: WorldManager.world.scene_metadata.values,
+      is_victory: WorldManager.world.victory?,
+      tutorial: WorldManager.world.tutorial_steps
     }
   end
 
