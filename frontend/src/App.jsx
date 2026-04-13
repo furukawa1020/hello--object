@@ -2,10 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './App.css';
 import MagicNote from './components/MagicNote';
 import WorldView from './components/WorldView';
-import ObjectDetail from './components/ObjectDetail';
-import NaviGuide from './components/NaviGuide';
 import Onboarding from './components/Onboarding';
-import Notebook from './components/Notebook';
 import VictoryScreen from './components/VictoryScreen';
 import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
 import useLocalStorage from './hooks/useLocalStorage';
@@ -31,6 +28,8 @@ function App() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [notebookCode, setNotebookCode]     = useState('');
   const [showVictory, setShowVictory]       = useState(false);
+  const [notebookEntries, setNotebookEntries] = useState([]);
+  const [isNotebookOpen, setIsNotebookOpen] = useState(false);
   const [stats, setStats]                   = useState({ executions: 0, events: 0, objectsInteracted: new Set(), errors: 0 });
   const [instability, setInstability]       = useState(0);
   const magicNoteRef = useRef(null);
@@ -192,6 +191,18 @@ function App() {
     setSelectedObject(obj);
   };
 
+  const handleSaveToNotebook = (code) => {
+    if (!code) return;
+    const entry = {
+      id: Date.now(),
+      label: code.slice(0, 24) + (code.length > 24 ? '…' : ''),
+      code,
+    };
+    setNotebookEntries(prev => [entry, ...prev]);
+    setIsNotebookOpen(true);
+    toastRef.current?.add('Note recorded.', 'success');
+  };
+
   const handleExportJourney = () => {
     const script = history.map(h => `# ${h.timestamp}\n${h.code}${h.error ? ' # Error: ' + h.error : ''}`).reverse().join('\n\n');
     const header = `# hello, object Journey Export\n# Executions: ${stats.executions}\n# Events: ${stats.events}\n\n`;
@@ -289,7 +300,7 @@ function App() {
             onExecute={handleExecute}
             selectedObject={selectedObject}
             initialCode={actionCode}
-            onSaveToNotebook={setNotebookCode}
+            onSaveToNotebook={handleSaveToNotebook}
           />
         </div>
 
@@ -299,7 +310,24 @@ function App() {
             onAction={setActionCode}
             objects={objects}
           />
-          <Notebook onInsert={setActionCode} pendingCode={notebookCode} />
+          
+          {/* Consolidated Notebook */}
+          <div className={`notebook-compact tactical-panel ${isNotebookOpen ? 'open' : ''}`}>
+            <button className="nb-header" onClick={() => setIsNotebookOpen(!isNotebookOpen)}>
+              <span>📓 Notebook ({notebookEntries.length})</span>
+            </button>
+            {isNotebookOpen && (
+              <div className="nb-body">
+                {notebookEntries.map(e => (
+                  <div key={e.id} className="nb-item">
+                    <span className="nb-label">{e.label}</span>
+                    <button onClick={() => setActionCode(e.code)}>Insert</button>
+                  </div>
+                ))}
+                {notebookEntries.length === 0 && <div className="nb-empty">No notes yet.</div>}
+              </div>
+            )}
+          </div>
           <div className="event-stream-container">
             <h4 className="label-tech">Event Stream (from Ruby)</h4>
             <div className="event-list-compact">

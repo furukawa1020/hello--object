@@ -15,6 +15,7 @@ const highlight = (code) => {
 
 const MagicNote = ({ onExecute, selectedObject, initialCode, onSaveToNotebook }) => {
   const [input, setInput]               = useState('');
+  const [analysis, setAnalysis]         = useState(null);
   const [isExecuting, setIsExecuting]   = useState(false);
   const [localHistory, setLocalHistory] = useState([]);
   const [historyIdx, setHistoryIdx]     = useState(-1);
@@ -30,6 +31,21 @@ const MagicNote = ({ onExecute, selectedObject, initialCode, onSaveToNotebook })
       textareaRef.current?.focus();
     }
   }, [initialCode]);
+
+  useEffect(() => {
+    if (!input.trim()) { setAnalysis(null); return; }
+    const timer = setTimeout(() => {
+      fetch('http://localhost:3000/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: input })
+      })
+      .then(r => r.json())
+      .then(data => setAnalysis(data.analysis))
+      .catch(() => {});
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [input]);
 
   useEffect(() => {
     if (!selectedObject) { setObjectMethods([]); return; }
@@ -115,7 +131,11 @@ const MagicNote = ({ onExecute, selectedObject, initialCode, onSaveToNotebook })
       <div className="note-header">
         <div className="note-title-area">
           <span className="note-title">✦ Magic Note</span>
-          <CodeAnalyzer code={input} />
+          {analysis && (
+            <div className="code-analyzer-badge" style={{ '--badge-color': analysis.color }}>
+              {analysis.label}
+            </div>
+          )}
         </div>
         <div className="note-controls">
           {selectedObject && objectMethods.length > 0 && (
