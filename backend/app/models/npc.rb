@@ -8,6 +8,33 @@ class Npc < GameObject
     @current_state = 'start'
   end
 
+  def ui_actions
+    a = WorldManager::ALIASES.key(@id) || @id
+    [
+      { label: '💬 話しかける',            code: "#{a}.talk" },
+      { label: '❓ 呪いについて聞く',       code: "#{a}.ask('cursed')" },
+      { label: '❓ クラスについて聞く',     code: "#{a}.ask('class')" },
+      { label: '🤝 答える (yes/no等)',     code: "#{a}.respond('yes')" },
+      { label: '🔮 鏡で反射する',          code: "mirror.reflect(#{a})" },
+    ]
+  end
+
+  def ui_schematic
+    <<~RUBY
+      class Npc < GameObject
+        def talk
+          # セリフを順番に返す
+          @lines[@talked_count % @lines.length]
+        end
+
+        def ask(topic)
+          # トピックに応じた回答を返す
+          responses[topic]
+        end
+      end
+    RUBY
+  end
+
   def talk
     @talked_count += 1
     emit('npc_talked', { npc_id: @id })
