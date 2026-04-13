@@ -125,14 +125,14 @@ function App() {
         }
       }
 
-      // Achievements
-      if (code.includes('class ') && !localStorage.getItem('ach_monkey')) {
-        toastRef.current?.add('Achievement: モンキーパッチの使い手', 'achievement');
-        localStorage.setItem('ach_monkey', 'true');
-      }
-      if (code.includes('singleton_class') && !localStorage.getItem('ach_singleton')) {
-        toastRef.current?.add('Achievement: 特異クラスの探求者', 'achievement');
-        localStorage.setItem('ach_singleton', 'true');
+      // Backend achievements
+      if (data.achievements?.length > 0) {
+        data.achievements.forEach(ach => {
+          if (!localStorage.getItem(ach.id)) {
+            toastRef.current?.add(`Achievement: ${ach.title}`, 'achievement');
+            localStorage.setItem(ach.id, 'true');
+          }
+        });
       }
     } catch (e) {
       console.error('execute failed', e);

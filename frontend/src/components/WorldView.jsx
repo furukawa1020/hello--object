@@ -115,7 +115,10 @@ const WorldView = ({ objects, onSelect, selectedId }) => {
 
   const sceneObjects = {};
   objects.forEach(obj => {
-    const scene = SCENE_MEMBERSHIP[obj.id] || 'the_first_room';
+    // If object is not in the static map, it's a dynamic/materialized object.
+    // We treat it as belonging to the "current active scene" so it appears where the player is.
+    const staticScene = SCENE_MEMBERSHIP[obj.id];
+    const scene = staticScene || activeScene;
     if (!sceneObjects[scene]) sceneObjects[scene] = [];
     sceneObjects[scene].push(obj);
   });

@@ -220,9 +220,13 @@ const ObjectDetail = ({ object, onAction, objects }) => {
     );
   }
 
-  const actions = (ACTIONS[object.class_name] || (() => []))(object);
+  const backendActions = object.actions || [];
+  const actions = backendActions.length > 0 
+    ? backendActions 
+    : (ACTIONS[object.class_name] || (() => []))(object);
+  
   const stateLabels = getFriendlyState(object, objects || []);
-  const schematic = SCHEMATICS[object.class_name];
+  const schematic = object.schematic || SCHEMATICS[object.class_name];
   const isCursed = object.variables.cursed;
 
   return (
