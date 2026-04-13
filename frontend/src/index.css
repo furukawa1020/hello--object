@@ -11,14 +11,15 @@
   --success-color: #00ff9d;
   --error-color: #ff4b4b;
   
-  --font-main: 'JetBrains Mono', 'IBM Plex Mono', monospace;
-  --font-ui: 'Inter', -apple-system, sans-serif;
+  --font-display: 'Outfit', 'Noto Sans JP', sans-serif;
+  --font-ui: 'Inter', 'Noto Sans JP', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
   
   --corner-radius: 2px; /* Sharp corners */
   --grid-size: 20px;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap');
 
 * {
   box-sizing: border-box;
@@ -32,7 +33,9 @@ body {
     radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0);
   background-size: var(--grid-size) var(--grid-size);
   color: var(--text-primary);
-  font-family: var(--font-main);
+  font-family: var(--font-ui);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
   overflow: hidden;
   height: 100vh;
   width: 100vw;
