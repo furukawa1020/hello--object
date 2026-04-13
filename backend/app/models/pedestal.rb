@@ -33,11 +33,20 @@ class Pedestal < GameObject
     RUBY
   end
 
-  def ui_labels
-    labels = []
-    labels << { icon: '⚡', text: '台座が起動中！', level: 'ok' } if @activated
-    labels << { icon: '📦', text: "配置: #{@holding}", level: 'neutral' } if @holding
-    labels
+  def ui_sprite
+    classes = ['pedestal-sprite']
+    classes << 'is-activated' if @activated
+    
+    glow = @activated ? "<div class='pedestal-glow'></div><span class='pedestal-item-icon'>🗝</span>" : ""
+
+    "<div class='#{classes.join(' ')}'>
+      <div class='pedestal-top'></div>
+      #{glow}
+    </div>"
+  end
+
+  def completed?
+    @activated
   end
 
   def place(item)
