@@ -1,11 +1,12 @@
 module Engine
   class World
-    attr_reader :objects, :current_scene_id
+    attr_reader :objects, :current_scene_id, :scene_metadata
 
     def initialize
       @objects = {}
       @hidden_objects = {}
       @current_scene_id = nil
+      @scene_metadata = {}
     end
 
     def add_object(obj)
