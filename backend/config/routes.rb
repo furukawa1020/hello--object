@@ -12,4 +12,8 @@ Rails.application.routes.draw do
   get  'state',   to: 'execution#state'
   post 'reset',   to: 'execution#reset'
   get  'methods', to: 'execution#methods_for'
+
+  # Serve the frontend
+  root 'static#index'
+  get '*path', to: 'static#index', constraints: ->(req) { !req.xhr? && req.format.html? }
 end
