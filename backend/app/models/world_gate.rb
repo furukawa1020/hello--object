@@ -7,6 +7,30 @@ class WorldGate < GameObject
     @authorized = false
   end
 
+  def ui_actions
+    a = 'gate'
+    [
+      { label: '🔑 認証する',     code: "#{a}.authorize('ADMIN_ACCESS')" },
+      { label: '🚪 門を開く',     code: "#{a}.open" },
+    ]
+  end
+
+  def ui_schematic
+    <<~RUBY
+      class WorldGate < GameObject
+        def authorize(key)
+          @authorized = (key == "ADMIN_ACCESS")
+        end
+
+        def open
+          if @authorized && @integrity <= 0
+            @open = true
+          end
+        end
+      end
+    RUBY
+  end
+
   def authorize(key = nil)
     if key == "ADMIN_ACCESS"
       @authorized = true
