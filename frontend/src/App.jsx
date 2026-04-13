@@ -226,6 +226,11 @@ function App() {
 
   return (
     <div className={`app-container instability-level-${glitchLevel}`}>
+      <div className="ui-corner top-left" />
+      <div className="ui-corner top-right" />
+      <div className="ui-corner bottom-left" />
+      <div className="ui-corner bottom-right" />
+
       <header className="app-header">
         <div className="app-brand">
           <h1>hello, <span className="brand-accent">object</span></h1>
