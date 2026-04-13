@@ -33,11 +33,20 @@ class Mirror < GameObject
     RUBY
   end
 
-  def ui_labels
-    labels = []
-    labels << { icon: '🔮', text: "反映中: #{@reflecting}", level: 'neutral' } if @reflecting
-    labels << { icon: '◈', text: "#{@reflection_count}回反射", level: 'neutral' } if @reflection_count > 0
-    labels
+  def ui_sprite
+    classes = ['mirror-sprite']
+    classes << 'is-reflecting' if @reflecting
+    
+    target_label = @reflecting ? "<div class='mirror-target-label'>#{@reflecting}</div>" : ""
+
+    "<div class='#{classes.join(' ')}'>
+      <div class='mirror-surface'></div>
+      #{target_label}
+    </div>"
+  end
+
+  def completed?
+    @reflection_count > 0
   end
 
   def reflect(target = nil)

@@ -30,10 +30,19 @@ class Tome < GameObject
     RUBY
   end
 
-  def ui_labels
-    labels = []
-    labels << { icon: '📖', text: '読み終わりました', level: 'ok' } if @read
-    labels
+  def ui_sprite
+    classes = ['tome-sprite']
+    classes << 'is-read' if @read
+    glow = @read ? "<div class='tome-glow'></div>" : ""
+    
+    "<div class='#{classes.join(' ')}'>
+      <div class='tome-pages'></div>
+      #{glow}
+    </div>"
+  end
+
+  def completed?
+    @read
   end
 
   def read

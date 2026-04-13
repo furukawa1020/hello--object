@@ -35,10 +35,19 @@ class Npc < GameObject
     RUBY
   end
 
-  def ui_labels
-    labels = []
-    labels << { icon: '◈', text: "#{@talked_count}回会話", level: 'neutral' } if @talked_count > 0
-    labels
+  def ui_sprite
+    classes = ['npc-sprite']
+    classes << 'has-talked' if @talked_count > 0
+    dot = @talked_count > 0 ? "<div class='npc-speech-dot'></div>" : ""
+    
+    "<div class='#{classes.join(' ')}'>
+      <div class='npc-eye'></div>
+      #{dot}
+    </div>"
+  end
+
+  def completed?
+    @talked_count > 0
   end
 
   def talk
