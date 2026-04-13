@@ -168,7 +168,13 @@ class WorldManager
       obj = @world.find_object(obj_id)
       result[alias_name] = obj if obj
     end
-    # Also expose archive tomes by alias
+    
+    # Also expose objects created dynamically (materialized) by their ID
+    @world.objects.each do |id, obj|
+      next if ALIASES.values.include?(id)
+      result[id] = obj
+    end
+
     result.compact
   end
 
