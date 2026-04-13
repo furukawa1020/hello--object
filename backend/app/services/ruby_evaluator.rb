@@ -22,6 +22,7 @@
         events: events,
         achievements: achievements,
         objects: WorldManager.all_objects.map(&:state),
+        scenes: WorldManager.world.scene_metadata.values,
         instability: @instability
       }
     rescue StandardError, ScriptError => e

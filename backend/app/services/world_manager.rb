@@ -8,6 +8,11 @@ class WorldManager
     # ═══════════════════════════════════════════════════
     # Scene 1: The First Room — 入門
     # ═══════════════════════════════════════════════════
+    @world.define_scene :the_first_room, label: '第一の間', description: '入門の部屋。まずはオブジェクトと対話することを学ぼう。'
+    @world.define_scene :the_sealed_chamber, label: '封印の間', description: '呪いに閉ざされた部屋。通常の手段では突破できない。'
+    @world.define_scene :the_archive, label: '記録の間', description: '知識の書庫。Rubyの奥深い概念が記録されている。'
+    @world.define_scene :the_departure, label: '脱出口', description: '真理への出口。最後の試練が待ち受けている。'
+
     @world.scene :the_first_room do
       door :door_001, '古びた木の扉',
            '錆びついた蝶番が軋む重厚な木製の扉。なにかが向こう側に待っている。',
