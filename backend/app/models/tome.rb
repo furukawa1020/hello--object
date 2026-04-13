@@ -30,6 +30,12 @@ class Tome < GameObject
     RUBY
   end
 
+  def ui_labels
+    labels = []
+    labels << { icon: '📖', text: '読み終わりました', level: 'ok' } if @read
+    labels
+  end
+
   def read
     @read = true
     emit('tome_opened')
