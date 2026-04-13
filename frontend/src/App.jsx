@@ -4,7 +4,6 @@ import MagicNote from './components/MagicNote';
 import WorldView from './components/WorldView';
 import Onboarding from './components/Onboarding';
 import VictoryScreen from './components/VictoryScreen';
-import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
 import useLocalStorage from './hooks/useLocalStorage';
 import { sounds, eventSound } from './utils/sounds';
 import ToastSystem from './components/ToastSystem';
