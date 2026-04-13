@@ -66,10 +66,17 @@ const WorldGateSprite = ({ obj }) => (
   </div>
 );
 
+const GlitchSprite = ({ obj }) => (
+  <div className={`glitch-sprite ${obj.variables.active ? 'is-active' : 'is-fixed'}`}>
+    <div className="glitch-core" />
+    {obj.variables.active && <div className="glitch-noise-overlay" />}
+  </div>
+);
+
 const SPRITES = {
   Door: DoorSprite, Chest: ChestSprite, Key: KeySprite,
   Tome: TomeSprite, Npc: NpcSprite, Mirror: MirrorSprite, Pedestal: PedestalSprite,
-  WorldGate: WorldGateSprite,
+  WorldGate: WorldGateSprite, Glitch: GlitchSprite,
 };
 
 // ── Hover tooltip ─────────────────────────────────────────
@@ -94,6 +101,7 @@ const isCompleted = (obj) => {
   if (obj.class_name === 'Mirror')  return (v.reflection_count || 0) > 0;
   if (obj.class_name === 'Pedestal') return v.activated;
   if (obj.class_name === 'WorldGate') return v.open;
+  if (obj.class_name === 'Glitch') return !v.active;
   return false;
 };
 
