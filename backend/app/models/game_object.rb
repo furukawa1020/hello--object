@@ -6,11 +6,15 @@ class GameObject
     @name = name
     @description = description
     @notes = []
+    @scene_id = nil
+  end
+
+  def set_scene(scene_id)
+    @scene_id = scene_id
   end
 
   def note(text)
-    @notes << text
-    "メモを記録しました: \"#{text}\""
+    # ...
   end
 
   # Emit a visual/game event to the frontend
@@ -27,6 +31,7 @@ class GameObject
       class_name: self.class.name,
       variables: variable_state,
       notes: @notes,
+      scene_id: @scene_id,
       actions: ui_actions,
       schematic: ui_schematic
     }
