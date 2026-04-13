@@ -9,6 +9,30 @@ class Pedestal < GameObject
     @holding     = nil
   end
 
+  def ui_actions
+    a = WorldManager::ALIASES.key(@id) || @id
+    [
+      { label: '🗝 鍵を置く',     code: "#{a}.place(key)" },
+      { label: '↩ アイテムを外す', code: "#{a}.remove" },
+    ]
+  end
+
+  def ui_schematic
+    <<~RUBY
+      class Pedestal < GameObject
+        def place(item)
+          if item.is_a?(Key)
+            @activated = true
+          end
+        end
+
+        def remove
+          @activated = false
+        end
+      end
+    RUBY
+  end
+
   def place(item)
     if @activated
       return "台座はすでに起動している。もう一度試す前に remove で取り外しなさい。"
