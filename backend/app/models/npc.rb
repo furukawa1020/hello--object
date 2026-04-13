@@ -35,6 +35,12 @@ class Npc < GameObject
     RUBY
   end
 
+  def ui_labels
+    labels = []
+    labels << { icon: '◈', text: "#{@talked_count}回会話", level: 'neutral' } if @talked_count > 0
+    labels
+  end
+
   def talk
     @talked_count += 1
     emit('npc_talked', { npc_id: @id })
