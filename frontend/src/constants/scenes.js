@@ -20,6 +20,7 @@ export const SCENE_MEMBERSHIP = {
   librarian_001: 'the_archive',
   gate_exit:     'the_departure',
   gatekeeper_001:'the_departure',
+  glitch_001:    'the_departure',
 };
 
 export const SCENE_LABELS = {

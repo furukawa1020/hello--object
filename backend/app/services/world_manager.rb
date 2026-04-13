@@ -106,6 +106,9 @@ class WorldManager
       world_gate :gate_exit, '真理の門',
                  '世界の終わりを示す巨大な門。これを抜ければ、あなたは真のRubyistとなる。'
 
+      glitch :glitch_001, 'ノイズの塊',
+             '実体のないバグの集積。世界の整合性を乱し、門の開放を阻害している。'
+
       npc :gatekeeper_001, '門番のホログラム',
           '実体のない青白い光。アクセス権限を監視している。',
           branches: {
@@ -119,8 +122,8 @@ class WorldManager
             'yes' => {
               lines: [
                 "ならば「ADMIN_ACCESS」という鍵を authority メソッドに渡しなさい。",
-                "ただし…ゲートの整合性（@integrity）が保たれている限り、門は開きません。",
-                "あなたの『メタプログラミング』で、整合性を 0 にするのです。"
+                "しかし…あの「ノイズの塊」がシステムを汚染している限り、門は反応しません。",
+                "まずは `glitch` の特異クラス（singleton_class）を書き換え、`neutralize!` を定義しなさい。"
               ],
             }
           }
@@ -147,6 +150,7 @@ class WorldManager
     'librarian'       => 'librarian_001',
     'gate'            => 'gate_exit',
     'gatekeeper'      => 'gatekeeper_001',
+    'glitch'          => 'glitch_001',
   }.freeze
 
   def self.get_object(name)
@@ -169,9 +173,10 @@ class WorldManager
   end
 
   def self.reset
-    [Door, Chest, Key, Tome, Npc, Mirror, Pedestal, WorldGate].each do |klass|
+    [Door, Chest, Key, Tome, Npc, Mirror, Pedestal, WorldGate, Glitch].each do |klass|
       load Rails.root.join('app', 'models', "#{klass.name.underscore}.rb").to_s rescue nil
     end
+    RubyEvaluator.reset_instability
     initialize_world
   end
 end
