@@ -1,7 +1,13 @@
-class RubyEvaluator
+  @instability = 0
+
   def self.evaluate(code)
     begin
       Engine::EventRecorder.start_session
+      
+      # Detect metaprogramming attempts
+      is_metaprog = code.include?('class ') || code.include?('define_method') || code.include?('instance_eval')
+      @instability += 5 if is_metaprog
+      @instability = [@instability - 1, 0].max if !is_metaprog && @instability > 0
 
       context = EvalContext.new(WorldManager.registry)
       result = context.instance_eval(code)
@@ -13,11 +19,15 @@ class RubyEvaluator
         result: serialize_result(result),
         result_type: result.class.name,
         events: events,
-        objects: WorldManager.all_objects.map(&:state)
+        objects: WorldManager.all_objects.map(&:state),
+        instability: @instability
       }
     rescue StandardError, ScriptError => e
+      @instability += 2
       friendly_msg = case e
                     when NoMethodError
+                      method_name = e.message.match(/undefined method [`'](.+)['`] for/)&.[](1)
+                      # ... suggestions logic ...
                       method_name = e.message.match(/undefined method [`'](.+)['`] for/)&.[](1)
                       receiver_class = e.message.match(/for an instance of (\w+)|for.*:(\w+)/)&.captures&.compact&.first
                       suggestions = receiver_class ? suggest_methods(receiver_class, method_name) : []
@@ -37,9 +47,14 @@ class RubyEvaluator
         error: friendly_msg,
         error_type: e.class.name,
         events: Engine::EventRecorder.collect,
-        objects: WorldManager.all_objects.map(&:state)
+        objects: WorldManager.all_objects.map(&:state),
+        instability: @instability
       }
     end
+  end
+
+  def self.reset_instability
+    @instability = 0
   end
 
   def self.serialize_result(val)
