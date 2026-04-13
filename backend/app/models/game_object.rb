@@ -35,13 +35,35 @@ class GameObject
       actions: ui_actions,
       schematic: ui_schematic,
       labels: ui_labels,
-      alias_name: WorldManager::ALIASES.key(@id) || @id
+      alias_name: WorldManager::ALIASES.key(@id) || @id,
+      sprite: ui_sprite,
+      tooltip: ui_tooltip,
+      completed: completed?
     }
   end
 
   def register!
     Engine::EventRecorder.world.add_object(self)
     "#{self.class.name} '#{@name}' が具現化されました。"
+  end
+
+  # Default visual representation (moves from JS to Ruby)
+  def ui_sprite
+    "<div class='generic-sprite'>#{@name[0]}</div>"
+  end
+
+  # Default tooltip data
+  def ui_tooltip
+    {
+      name: @name,
+      class_name: self.class.name,
+      description: @description
+    }
+  end
+
+  # Default completion logic
+  def completed?
+    false
   end
 
   # Default actions
