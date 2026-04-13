@@ -54,7 +54,7 @@ function App() {
 
   const fetchState = async () => {
     try {
-      const r = await fetch('http://localhost:3000/state');
+      const r = await fetch('/state');
       const data = await r.json();
       if (data.success) {
         setObjects(data.objects);
@@ -69,7 +69,7 @@ function App() {
 
   const handleExecute = useCallback(async (code) => {
     try {
-      const r = await fetch('http://localhost:3000/execute', {
+      const r = await fetch('/execute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code }),
@@ -167,7 +167,7 @@ function App() {
     if (!window.confirm('世界をリセットして、すべての変更を元に戻します。よろしいですか？')) return;
     sounds.reset();
     try {
-      const r = await fetch('http://localhost:3000/reset', { method: 'POST' });
+      const r = await fetch('/reset', { method: 'POST' });
       const data = await r.json();
       if (data.success) {
         setObjects(data.objects);

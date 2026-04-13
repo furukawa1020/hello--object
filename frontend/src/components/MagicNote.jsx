@@ -35,7 +35,7 @@ const MagicNote = ({ onExecute, selectedObject, initialCode, onSaveToNotebook })
   useEffect(() => {
     if (!input.trim()) { setAnalysis(null); return; }
     const timer = setTimeout(() => {
-      fetch('http://localhost:3000/analyze', {
+      fetch('/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code: input })
@@ -49,7 +49,7 @@ const MagicNote = ({ onExecute, selectedObject, initialCode, onSaveToNotebook })
 
   useEffect(() => {
     if (!selectedObject) { setObjectMethods([]); return; }
-    fetch(`http://localhost:3000/methods?name=${encodeURIComponent(selectedObject.id)}`)
+    fetch(`/methods?name=${encodeURIComponent(selectedObject.id)}`)
       .then(r => r.json())
       .then(data => { if (data.success) setObjectMethods(data.methods); })
       .catch(() => {});
