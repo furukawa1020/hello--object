@@ -7,6 +7,32 @@ class Mirror < GameObject
     @reflection_count = 0
   end
 
+  def ui_actions
+    a = WorldManager::ALIASES.key(@id) || @id
+    [
+      { label: '🚪 ドアを反射',    code: "#{a}.reflect(door)" },
+      { label: '📦 チェストを反射', code: "#{a}.reflect(chest)" },
+      { label: '🗝 鍵を反射',     code: "#{a}.reflect(key)" },
+      { label: '🔮 覗き込む',     code: "#{a}.gaze" },
+      { label: '✕ 消す',         code: "#{a}.reflect" },
+    ]
+  end
+
+  def ui_schematic
+    <<~RUBY
+      class Mirror < GameObject
+        def reflect(target)
+          @reflecting = target.id
+          # オブジェクトの詳細情報を返す
+        end
+
+        def gaze
+          # 現在の反映状態を返す
+        end
+      end
+    RUBY
+  end
+
   def reflect(target = nil)
     if target.nil?
       @reflecting = nil
