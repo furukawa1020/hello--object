@@ -25,10 +25,13 @@
         scenes: WorldManager.world.scene_metadata.values,
         instability: @instability,
         is_victory: WorldManager.world.victory?,
-        tutorial: WorldManager.world.tutorial_steps
+        tutorial: WorldManager.world.tutorial_steps,
+        navi_message: Engine::Navi.generate_message(WorldManager.world, @last_result, @last_error)
       }
     rescue StandardError, ScriptError => e
       @instability += 2
+      @last_result = nil
+      @last_error = e
       achievements = Engine::AchievementManager.analyze_execution(code, nil)
       friendly_msg = case e
                     # ...
