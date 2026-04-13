@@ -6,6 +6,30 @@ class Tome < GameObject
     @knowledge = []
   end
 
+  def ui_actions
+    a = WorldManager::ALIASES.key(@id) || @id
+    [
+      { label: '📜 読む',         code: "#{a}.read" },
+      { label: '💡 ヒントを1つ',  code: "#{a}.tip" },
+      { label: '🔮 鏡で反射する', code: "mirror.reflect(#{a})" },
+    ]
+  end
+
+  def ui_schematic
+    <<~RUBY
+      class Tome < GameObject
+        def read
+          @read = true
+          # ヒントを返す
+        end
+
+        def tip
+          knowledge_lines.sample
+        end
+      end
+    RUBY
+  end
+
   def read
     @read = true
     emit('tome_opened')
