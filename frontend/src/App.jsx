@@ -23,6 +23,7 @@ const isVictory = (objects) => {
 function App() {
   const [objects, setObjects]               = useState([]);
   const [scenes, setScenes]                 = useState([]);
+  const [tutorial, setTutorial]             = useState([]);
   const [selectedObject, setSelectedObject] = useState(null);
   const [history, setHistory]               = useState([]);
   const [allEvents, setAllEvents]           = useState([]);
@@ -62,6 +63,8 @@ function App() {
       if (data.success) {
         setObjects(data.objects);
         if (data.scenes) setScenes(data.scenes);
+        if (data.tutorial) setTutorial(data.tutorial);
+        if (data.is_victory) setShowVictory(true);
       }
     } catch (e) { console.error('fetchState failed', e); }
     finally { setLoading(false); }
@@ -141,6 +144,14 @@ function App() {
 
       if (data.scenes) {
         setScenes(data.scenes);
+      }
+
+      if (data.tutorial) {
+        setTutorial(data.tutorial);
+      }
+
+      if (data.is_victory) {
+        setShowVictory(true);
       }
     } catch (e) {
       console.error('execute failed', e);
@@ -295,10 +306,13 @@ function App() {
 
       {showVictory && <VictoryScreen onDismiss={() => setShowVictory(false)} />}
       {showOnboarding && (
-        <Onboarding onComplete={() => {
-          setShowOnboarding(false);
-          localStorage.setItem('hasSeenOnboarding', 'true');
-        }} />
+        <Onboarding 
+          steps={tutorial}
+          onComplete={() => {
+            setShowOnboarding(false);
+            localStorage.setItem('hasSeenOnboarding', 'true');
+          }} 
+        />
       )}
       <ToastSystem ref={toastRef} />
     </div>
