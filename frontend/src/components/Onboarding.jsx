@@ -1,20 +1,12 @@
 import React, { useState } from 'react';
 
-const Onboarding = ({ onComplete }) => {
+const Onboarding = ({ onComplete, steps: providedSteps }) => {
   const [step, setStep] = useState(0);
   
-  const steps = [
+  const steps = (providedSteps && providedSteps.length > 0) ? providedSteps : [
     {
-      title: "hello, object へようこそ",
-      content: "ここは、Rubyという魔法を使って『オブジェクト』と対話する世界です。まずは画面左のオブジェクト（ドアやチェスト）をクリックしてみましょう。"
-    },
-    {
-      title: "オブジェクトの正体を知る",
-      content: "オブジェクトをクリックすると、右側にその『内部状態（変数）』と、何ができるかの『Actions』が表示されます。"
-    },
-    {
-      title: "魔法を唱える (Magic Note)",
-      content: "画面下のノートにコードを入力して『Execute』を押すと、オブジェクトに命令を送れます。最初は『Actions』ボタンをクリックして、魔法を試してみましょう！"
+      title: "Loading Tutorial...",
+      content: "真理を読み込んでいます..."
     }
   ];
 
