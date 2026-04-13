@@ -16,6 +16,11 @@ class ExecutionController < ApplicationController
     }
   end
 
+  def analyze
+    analysis = RubyEvaluator.analyze_code_pattern(params[:code])
+    render json: { analysis: analysis }
+  end
+
   def reset
     WorldManager.reset
     render json: {
