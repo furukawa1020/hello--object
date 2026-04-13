@@ -16,10 +16,7 @@ class Door < GameObject
     ]
   end
 
-  def ui_schematic
-    <<~RUBY
-      class Door < GameObject
-        def ui_labels
+  def ui_labels
     labels = []
     labels << { icon: '⛧', text: '強力な呪いがかかっています', level: 'danger' } if @cursed
     labels << { icon: '🔒', text: '鍵がかかっています', level: 'warning' } if @locked
@@ -28,7 +25,32 @@ class Door < GameObject
     labels
   end
 
-  def unlock
+  def ui_sprite
+    classes = ['door-sprite']
+    classes << 'is-open' if @open
+    classes << 'is-locked' if @locked
+    classes << 'is-cursed' if @cursed
+    
+    glyph = @cursed ? "<div class='curse-glyph'>⛧</div>" : ""
+    glow  = @open ? "<div class='door-open-glow'></div>" : ""
+    indicator = (!@locked && !@cursed && !@open) ? "<div class='door-unlocked-indicator'></div>" : ""
+
+    "<div class='#{classes.join(' ')}'>
+      <div class='door-knob'></div>
+      #{glyph}
+      #{indicator}
+      #{glow}
+    </div>"
+  end
+
+  def completed?
+    @open
+  end
+
+  def ui_schematic
+    <<~RUBY
+      class Door < GameObject
+        def unlock
           if @cursed
             raise "呪われた扉は開けられない"
           end
