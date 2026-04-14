@@ -1,6 +1,6 @@
 class WeightPlate < GameObject
-  def initialize(id, name: '古代の感圧板', description: '重厚な石で作られた感圧板。上に何か重いものを乗せる必要がありそうだ。')
-    super(id, name: name, description: description)
+  def initialize(id:, name: '古代の感圧板', description: '重厚な石で作られた感圧板。上に何か重いものを乗せる必要がありそうだ。')
+    super(id: id, name: name, description: description)
     @variables[:activated] = false
     @variables[:current_object_id] = nil
   end
