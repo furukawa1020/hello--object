@@ -1,8 +1,6 @@
 class WorldManager
-  @world = Engine::World.new
-
   def self.world
-    @world
+    @world ||= Engine::World.new.tap { |w| initialize_world(w) if w.objects.empty? }
   end
 
   EVENT_METADATA = {
@@ -18,7 +16,9 @@ class WorldManager
     'object_revealed'    => { icon: '✨', text: '新たなオブジェクトが現れた！', color: '#ff79c6' },
   }.freeze
 
-  def self.initialize_world
+  def self.initialize_world(target_world = nil)
+    @world = target_world if target_world
+    @world ||= Engine::World.new
     @world.clear
     Engine::EventRecorder.world = @world
 
@@ -177,22 +177,23 @@ class WorldManager
 
   def self.get_object(name)
     id = ALIASES.fetch(name.to_s, name.to_s)
-    @world.find_object(id)
+    world.find_object(id)
   end
 
   def self.all_objects
-    @world.objects.values
+    world.objects.values
   end
 
   def self.registry
+    w = world
     result = {}
     ALIASES.each do |alias_name, obj_id|
-      obj = @world.find_object(obj_id)
+      obj = w.find_object(obj_id)
       result[alias_name] = obj if obj
     end
     
     # Also expose objects created dynamically (materialized) by their ID
-    @world.objects.each do |id, obj|
+    w.objects.each do |id, obj|
       next if ALIASES.values.include?(id)
       result[id] = obj
     end
