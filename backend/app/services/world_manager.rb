@@ -47,6 +47,9 @@ class WorldManager
 
       object :mirror, :mirror_001, '知識の鏡',
              '磨き上げられた鏡。`mirror.reflect(オブジェクト)` で対象の本質を映し出す。'
+
+      weight_plate :plate_001, '古代の感圧板', '重さ100以上のオブジェクトを乗せると起動する。'
+      heavy_gate :hgate_001, '第一防壁', '感圧板と連動している鋼鉄の門。', plate_id: :plate_001
     end
 
     # ═══════════════════════════════════════════════════
@@ -75,6 +78,9 @@ class WorldManager
              '台座に刻まれた文字：「正しき鍵を捧げよ。さすれば知恵が授けられん。」',
              accepts: 'Key', reveals: 'tome_sealed',
              reward_message: '黄金の鍵を台座に捧げた。光が部屋を満たす…'
+
+      unbreakable_safe :safe_001, '絶対金庫', '絶対に開かない金庫。ソースコード(class UnbreakableSafe)自体を書き換える(モンキーパッチ)必要がある。'
+      golem_gatekeeper :golem_001, '門番ゴーレム', '「dance」メソッドを持つオブジェクトしか通さない。ダックタイピング（特異メソッド）の試練。'
     end
 
     # ═══════════════════════════════════════════════════
@@ -119,6 +125,8 @@ class WorldManager
             "`Door.instance_methods(false)` で Door 独自のメソッド一覧を見られます。",
             "すべての Ruby クラスは BasicObject から始まります。`Door.ancestors` を試してみてください。"
           ]
+
+      forbidden_tome :tome_forbidden, '禁断の魔導書', 'そのまま読むと例外(エラー)が発生する。begin..rescue で中身を安全に取り出せ。'
     end
 
     # ═══════════════════════════════════════════════════
@@ -141,7 +149,7 @@ class WorldManager
             'intro' => {
               lines: ["あなたは門を開きたいのですか？ `respond('yes')` と答えなさい。"],
             },
-            'yes' => {
+              'yes' => {
               lines: [
                 "ならば「ADMIN_ACCESS」という鍵を authority メソッドに渡しなさい。",
                 "しかし…あの「ノイズの塊」がシステムを汚染している限り、門は反応しません。",
@@ -149,6 +157,8 @@ class WorldManager
               ],
             }
           }
+      
+      core_mainframe :mainframe_001, '中枢メインフレーム', 'auth_001 から auth_050 までの認証メソッドを要求する。method_missing を使え。'
     end
   end
 
@@ -156,11 +166,15 @@ class WorldManager
     'door'            => 'door_001',
     'chest'           => 'chest_001',
     'key'             => 'key_001',
+    'plate'           => 'plate_001',
+    'hgate'           => 'hgate_001',
     'tome'            => 'tome_001',
     'sage'            => 'sage_001',
     'mirror'          => 'mirror_001',
+    'safe'            => 'safe_001',
+    'golem'           => 'golem_001',
     'cursed_door'     => 'cursed_door',
-    'forbidden_tome'  => 'tome_002',
+    'forbidden_tome'  => 'tome_forbidden',
     'warlock'         => 'warlock_001',
     'pedestal'        => 'pedestal_001',
     'tome_sealed'     => 'tome_sealed',
@@ -170,6 +184,7 @@ class WorldManager
     'tome_005'        => 'tome_005',
     'mirror_002'      => 'mirror_002',
     'librarian'       => 'librarian_001',
+    'mainframe'       => 'mainframe_001',
     'gate'            => 'gate_exit',
     'gatekeeper'      => 'gatekeeper_001',
     'glitch'          => 'glitch_001',
@@ -202,7 +217,7 @@ class WorldManager
   end
 
   def self.reset
-    [Door, Chest, Key, Tome, Npc, Mirror, Pedestal, WorldGate, Glitch].each do |klass|
+    [Door, Chest, Key, Tome, Npc, Mirror, Pedestal, WorldGate, Glitch, WeightPlate, HeavyGate, UnbreakableSafe, GolemGatekeeper, ForbiddenTome, CoreMainframe].each do |klass|
       load Rails.root.join('app', 'models', "#{klass.name.underscore}.rb").to_s rescue nil
     end
     RubyEvaluator.reset_instability
