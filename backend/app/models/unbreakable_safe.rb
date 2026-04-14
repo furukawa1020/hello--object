@@ -1,6 +1,6 @@
 class UnbreakableSafe < GameObject
-  def initialize(id, name: '絶対金庫', description: 'いかなる物理的干渉も受け付けない暗号金庫。クラス自体を書き換えるしか開ける方法はなさそうだ。')
-    super(id, name: name, description: description)
+  def initialize(id:, name: '絶対金庫', description: 'いかなる物理的干渉も受け付けない暗号金庫。クラス自体を書き換えるしか開ける方法はなさそうだ。')
+    super(id: id, name: name, description: description)
     @variables[:open] = false
   end
 
@@ -24,7 +24,8 @@ class UnbreakableSafe < GameObject
         { icon: '🛡️', text: @variables[:open] ? 'Patched' : 'Hardcoded', level: @variables[:open] ? 2 : 1 }
       ],
       actions: [
-        { label: 'Attempt Unlock', code: "#{id}.unlock", disabled: @variables[:open] }
+        { label: 'Attempt Unlock', code: "#{id}.unlock", disabled: @variables[:open] },
+        { label: 'Monkey Patch!', code: "class UnbreakableSafe\n  def unlock\n    @variables[:open] = true\n    'Hacked!'\n  end\nend\n#{id}.unlock", disabled: false }
       ],
       completed: @variables[:open]
     )
@@ -32,14 +33,19 @@ class UnbreakableSafe < GameObject
 
   def schematic
     <<~RUBY
-      # #{self.class.name} のクラスを再定義して
-      # unlock メソッドを上書き（オーバーライド）せよ！
-
       class UnbreakableSafe < GameObject
         def unlock
-          # 変更前は絶対に false を返す
+          # HARDCODED: always returns false
           @variables[:open] = false
-          return "アクセス拒否" 
+          return "Access Denied"
+        end
+      end
+
+      # Your mission: reopen this class and override unlock!
+      class UnbreakableSafe
+        def unlock
+          @variables[:open] = true
+          "Hacked!"
         end
       end
     RUBY
