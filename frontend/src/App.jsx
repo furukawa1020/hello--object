@@ -393,14 +393,27 @@ function App() {
           </div>
           
           {/* Navi Guide (Ruby-driven) */}
-          <div className={`navi-guide tactical-panel ${isNaviMinimized ? 'minimized' : ''}`} onClick={() => setIsNaviMinimized(!isNaviMinimized)}>
+          <div className={`navi-guide tactical-panel ${isNaviMinimized ? 'minimized' : ''}`}>
             <div className="navi-character"><div className="navi-eye" /></div>
             <div className="navi-content">
               <div className="navi-header">
-                NAVI SYSTEM v2.0
-                <span className="minimize-hint">{isNaviMinimized ? ' + ' : ' — '}</span>
+                <span className="navi-title">NAVI SYSTEM v2.0</span>
+                <button 
+                  className="navi-toggle-btn" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsNaviMinimized(!isNaviMinimized);
+                  }}
+                  title={isNaviMinimized ? "Open Guide" : "Close Guide"}
+                >
+                  {isNaviMinimized ? '➕' : '✖'}
+                </button>
               </div>
-              {!isNaviMinimized && <div className="navi-text">{naviMessage || "システム稼働中... 何か質問はありますか？"}</div>}
+              {!isNaviMinimized && (
+                <div className="navi-text">
+                  {naviMessage || "システム稼働中... 何か質問はありますか？"}
+                </div>
+              )}
             </div>
           </div>
         </aside>

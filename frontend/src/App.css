@@ -542,13 +542,24 @@
   opacity: 0.6;
 }
 
-.navi-text {
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--text-primary);
+.navi-toggle-btn {
+  background: none;
+  border: none;
+  color: var(--accent-color);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
 }
 
-/* Onboarding Overlay */
+.navi-toggle-btn:hover {
+  transform: scale(1.3);
+  color: #fff;
+}
+
 .onboarding-overlay {
   position: fixed;
   top: 0;
