@@ -40,5 +40,8 @@ RUN useradd rails --create-home --shell /bin/bash && \
     chown -R rails:rails db log storage tmp
 USER rails:rails
 
+ENV SECRET_KEY_BASE_DUMMY="1"
+
+ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 EXPOSE 3000
 CMD ["./bin/rails", "server", "-b", "0.0.0.0"]
