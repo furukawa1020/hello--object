@@ -1,6 +1,10 @@
 class WorldManager
   @world = Engine::World.new
 
+  def self.world
+    @world
+  end
+
   EVENT_METADATA = {
     'door_unlocked'      => { icon: '🔓', text: '扉の鍵が開いた', color: '#3aff8a' },
     'door_locked'        => { icon: '🔒', text: '扉に鍵がかかった', color: '#ff993a' },

@@ -5,6 +5,7 @@ import WorldView from './components/WorldView';
 import Onboarding from './components/Onboarding';
 import VictoryScreen from './components/VictoryScreen';
 import useLocalStorage from './hooks/useLocalStorage';
+import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
 import { sounds, eventSound } from './utils/sounds';
 import ToastSystem from './components/ToastSystem';
 
