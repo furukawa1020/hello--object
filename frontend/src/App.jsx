@@ -32,6 +32,7 @@ function App() {
   const [isNotebookOpen, setIsNotebookOpen] = useState(false);
   const [stats, setStats]                   = useState({ executions: 0, events: 0, objectsInteracted: new Set(), errors: 0 });
   const [instability, setInstability]       = useState(0);
+  const [isNaviMinimized, setIsNaviMinimized] = useState(false);
   const magicNoteRef = useRef(null);
   const toastRef = useRef(null);
   const storage = useLocalStorage();
@@ -392,11 +393,14 @@ function App() {
           </div>
           
           {/* Navi Guide (Ruby-driven) */}
-          <div className="navi-guide tactical-panel">
+          <div className={`navi-guide tactical-panel ${isNaviMinimized ? 'minimized' : ''}`} onClick={() => setIsNaviMinimized(!isNaviMinimized)}>
             <div className="navi-character"><div className="navi-eye" /></div>
             <div className="navi-content">
-              <div className="navi-header">NAVI SYSTEM v2.0 (Ruby Engine)</div>
-              <div className="navi-text">{naviMessage || "こんにちは。私はこの世界の観測者です。"}</div>
+              <div className="navi-header">
+                NAVI SYSTEM v2.0
+                <span className="minimize-hint">{isNaviMinimized ? ' + ' : ' — '}</span>
+              </div>
+              {!isNaviMinimized && <div className="navi-text">{naviMessage || "システム稼働中... 何か質問はありますか？"}</div>}
             </div>
           </div>
         </aside>

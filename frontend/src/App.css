@@ -501,6 +501,17 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.navi-guide.minimized {
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.navi-guide.minimized .navi-character {
+  width: 14px;
+  height: 14px;
 }
 
 .navi-eye {
@@ -517,10 +528,18 @@
 }
 
 .navi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: 10px;
   color: var(--accent-color);
   margin-bottom: 4px;
   letter-spacing: 1px;
+}
+
+.minimize-hint {
+  font-size: 14px;
+  opacity: 0.6;
 }
 
 .navi-text {
