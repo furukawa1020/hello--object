@@ -402,7 +402,7 @@ function App() {
                   {h.error ? (
                     <div className="log-error">X {h.error}</div>
                   ) : (
-                    <div className="log-result">=> {h.formattedResult || h.result?.toString()}</div>
+                    <div className="log-result">=&gt; {h.formattedResult || h.result?.toString()}</div>
                   )}
                 </div>
               ))}
@@ -443,19 +443,6 @@ function App() {
           }} 
         />
       )}
-    </div>
-
-      {showVictory && <VictoryScreen onDismiss={() => setShowVictory(false)} />}
-      {showOnboarding && (
-        <Onboarding 
-          steps={tutorial}
-          onComplete={() => {
-            setShowOnboarding(false);
-            localStorage.setItem('hasSeenOnboarding', 'true');
-          }} 
-        />
-      )}
-      <ToastSystem ref={toastRef} />
     </div>
   );
 }
