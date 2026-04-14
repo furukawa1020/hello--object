@@ -63,5 +63,29 @@ module Engine
     def glitch(id, name, description, **vars)
       object(:glitch, id, name, description, **vars)
     end
+
+    def weight_plate(id, name, description, **vars)
+      object(:weight_plate, id, name, description, **vars)
+    end
+
+    def heavy_gate(id, name, description, **vars)
+      object(:heavy_gate, id, name, description, **vars)
+    end
+
+    def unbreakable_safe(id, name, description, **vars)
+      object(:unbreakable_safe, id, name, description, **vars)
+    end
+
+    def golem_gatekeeper(id, name, description, **vars)
+      object(:golem_gatekeeper, id, name, description, **vars)
+    end
+
+    def forbidden_tome(id, name, description, **vars)
+      object(:forbidden_tome, id, name, description, **vars)
+    end
+
+    def core_mainframe(id, name, description, **vars)
+      object(:core_mainframe, id, name, description, **vars)
+    end
   end
 end
