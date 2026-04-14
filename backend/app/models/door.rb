@@ -9,10 +9,10 @@ class Door < GameObject
   def ui_actions
     a = WorldManager::ALIASES.key(@id) || @id
     [
-      { label: `🔓 鍵を開ける`,  code: "#{a}.unlock",  disabled: !@locked },
-      { label: `🚪 扉を開く`,    code: "#{a}.open",    disabled: @locked },
-      { label: `🔒 鍵をかける`,  code: "#{a}.lock",    disabled: @locked },
-      { label: `🚪 扉を閉める`,  code: "#{a}.close",   disabled: !@open },
+      { label: '🔓 鍵を開ける',  code: "#{a}.unlock",  disabled: !@locked },
+      { label: '🚪 扉を開く',    code: "#{a}.open",    disabled: @locked },
+      { label: '🔒 鍵をかける',  code: "#{a}.lock",    disabled: @locked },
+      { label: '🚪 扉を閉める',  code: "#{a}.close",   disabled: !@open },
     ]
   end
 
