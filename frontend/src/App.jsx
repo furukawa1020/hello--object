@@ -398,7 +398,7 @@ function App() {
               {history.length === 0 && <div className="log-empty">LOG_EMPTY</div>}
               {history.map((h, i) => (
                 <div key={i} className={`log-entry ${h.error ? 'is-error' : ''}`} onClick={() => setActionCode(h.code)}>
-                  <div className="log-input">> {h.code}</div>
+                  <div className="log-input">&gt; {h.code}</div>
                   {h.error ? (
                     <div className="log-error">X {h.error}</div>
                   ) : (
