@@ -25,14 +25,14 @@ class WorldManager
     # ═══════════════════════════════════════════════════
     # Scene 1: The First Room — 入門
     # ═══════════════════════════════════════════════════
-    @world.define_scene :the_first_room, label: '第一の間', description: '入門の部屋。まずはオブジェクトと対話することを学ぼう。'
-    @world.define_scene :the_sealed_chamber, label: '封印の間', description: '呪いに閉ざされた部屋。通常の手段では突破できない。'
-    @world.define_scene :the_archive, label: '記録の間', description: '知識の書庫。Rubyの奥深い概念が記録されている。'
-    @world.define_scene :the_departure, label: '脱出口', description: '真理への出口。最後の試練が待ち受けている。'
+    @world.define_scene :the_first_room, label: 'Entry Point', description: '入門用のコード空間。オブジェクトの基本操作を理解するための場所。'
+    @world.define_scene :the_sealed_chamber, label: 'Encrypted Chamber', description: 'アクセス制限がかかった空間。クラス定義の上書き（モンキーパッチ）が必要。'
+    @world.define_scene :the_archive, label: 'The Library', description: 'Rubyのコアコンセプトやマニュアルが格納されたデータ領域。'
+    @world.define_scene :the_departure, label: 'Final Terminal', description: '次のフェーズへの出口。整合性の検証が求められる。'
 
     @world.scene :the_first_room do
-      door :door_001, '古びた木の扉',
-           '錆びついた蝶番が軋む重厚な木製の扉。なにかが向こう側に待っている。',
+      door :door_001, 'アクセス扉',
+           'システム内の先へ進むための基本オブジェクト。引数なしの `open` メソッドで開くことが可能。',
            locked: true, open: false
 
       k = key :key_001, '黄金の鍵', '眩い光を放つ古い鍵。チェストの錠前に合いそうだ。'
@@ -208,6 +208,3 @@ class WorldManager
     initialize_world
   end
 end
-
-# Initialize on load
-WorldManager.initialize_world
