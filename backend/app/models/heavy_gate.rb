@@ -1,13 +1,13 @@
 class HeavyGate < GameObject
-  def initialize(id, plate_id:, name: '重力式防壁', description: '分厚い鋼鉄のゲート。隣接するシステムにロックされているようだ。')
-    super(id, name: name, description: description)
+  def initialize(id:, plate_id:, name: '重力式防壁', description: '分厚い鋼鉄のゲート。隣接するシステムにロックされているようだ。')
+    super(id: id, name: name, description: description)
     @variables[:open] = false
-    @variables[:plate_id] = plate_id
+    @variables[:plate_id] = plate_id.to_s
   end
 
   def open
-    plate = engine.world.find(@variables[:plate_id])
-    
+    plate = engine.world.find_object(@variables[:plate_id])
+
     if plate && plate.variables[:activated]
       @variables[:open] = true
       engine.record_event('success', "防壁が重々しい音を立てて開いた。", object_id: id, color: '#3aff8a')
@@ -41,9 +41,10 @@ class HeavyGate < GameObject
     <<~RUBY
       class HeavyGate < GameObject
         def open
-          plate = engine.world.find(@plate_id)
-          if plate.activated?
-            @open = true
+          plate = engine.world.find_object(@plate_id)
+          if plate && plate.variables[:activated]
+            @variables[:open] = true
+            "Unlocked!"
           else
             "Access Denied"
           end
