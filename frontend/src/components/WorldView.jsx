@@ -52,7 +52,7 @@ const WorldView = ({ objects, scenes, onSelect, selectedId }) => {
 
   return (
     <div className="world-view tactical-panel">
-      {/* Scene tabs */}
+      {/* Scene tabs / Data Portals */}
       <div className="world-header">
         <div className="scene-tabs">
           {scenes.map(s => {
@@ -65,68 +65,96 @@ const WorldView = ({ objects, scenes, onSelect, selectedId }) => {
                 className={`scene-tab ${activeScene === s.id ? 'active' : ''}`}
                 onClick={() => switchScene(s.id)}
               >
-                {s.label}
-                <span className="scene-tab-count">
-                  {completed}/{count}
-                </span>
+                <span className="scene-label">{s.label}</span>
+                <div className="scene-status">
+                  <div className="status-progress-bar">
+                    <div className="progress-fill" style={{ width: `${(completed/count)*100}%` }} />
+                  </div>
+                  <span className="scene-tab-count mono">
+                    {completed}/{count}
+                  </span>
+                </div>
               </button>
             );
           })}
         </div>
-        <span className="scene-id-label">{activeSceneData.description}</span>
       </div>
 
-      {/* Objects + tooltip */}
-      <div className={`scene ${transitioning ? 'transitioning' : ''}`}>
+      <div className="scene-meta-bar">
+        <span className="label-tech">ACTIVE_INSTANCE:</span>
+        <span className="scene-id-label">{activeSceneData.id} // {activeSceneData.description}</span>
+      </div>
+
+      {/* Objects + data nodes */}
+      <div className={`scene-viewport ${transitioning ? 'transitioning' : ''}`}>
         {currentObjects.length === 0 && (
-          <div className="scene-empty">このシーンにはまだオブジェクトがありません</div>
+          <div className="scene-empty">
+            <div className="empty-icon">∅</div>
+            <p>NULL_SPACE_DETECTED</p>
+            <span>No data nodes found in this instance.</span>
+          </div>
         )}
-        {currentObjects.map(obj => {
-          const isSelected = selectedId === obj.id;
-          const done       = obj.completed;
-          
-          return (
-            <div
-              key={obj.id}
-              className={['game-object', obj.class_name.toLowerCase(),
-                isSelected ? 'selected' : '',
-                obj.variables.cursed ? 'cursed' : '',
-                obj.variables.activated ? 'activated' : '',
-                done ? 'completed' : '',
-              ].filter(Boolean).join(' ')}
-              onClick={() => onSelect(obj)}
-              onMouseEnter={() => setHoveredId(obj.id)}
-              onMouseLeave={() => setHoveredId(null)}
-              title=""
-            >
-              <div className="object-visual">
-                <div 
-                  className="sprite-container"
-                  dangerouslySetInnerHTML={{ __html: obj.sprite }} 
-                />
-                {done && <div className="completion-check">✓</div>}
-              </div>
-              <div className="object-label-row">
-                <span className="object-label">{obj.name}</span>
-                <span className="object-class-mini">{obj.class_name}</span>
-              </div>
+        <div className="nodes-grid">
+          {currentObjects.map(obj => {
+            const isSelected = selectedId === obj.id;
+            const done       = obj.completed;
+            
+            return (
+              <div
+                key={obj.id}
+                className={['game-object', obj.class_name.toLowerCase(),
+                  isSelected ? 'selected' : '',
+                  obj.variables.cursed ? 'cursed' : '',
+                  obj.variables.activated ? 'activated' : '',
+                  done ? 'completed' : '',
+                ].filter(Boolean).join(' ')}
+                onClick={() => onSelect(obj)}
+                onMouseEnter={() => setHoveredId(obj.id)}
+                onMouseLeave={() => setHoveredId(null)}
+              >
+                <div className="object-visual">
+                  <div className="hologram-effect"></div>
+                  <div 
+                    className="sprite-container"
+                    dangerouslySetInnerHTML={{ __html: obj.sprite }} 
+                  />
+                  {done && <div className="completion-check">SYNC_COMPLETE</div>}
+                </div>
+                <div className="object-info">
+                  <span className="object-label">{obj.name}</span>
+                  <span className="object-class-mini">#{obj.class_name}</span>
+                </div>
 
-              {/* Hover tooltip */}
-              {hoveredId === obj.id && (
-                <ObjectTooltip tooltip={obj.tooltip} />
-              )}
-            </div>
-          );
-        })}
+                {isSelected && <div className="selection-brackets"></div>}
+
+                {/* Hover data overlay */}
+                {hoveredId === obj.id && !isSelected && (
+                  <ObjectTooltip tooltip={obj.tooltip} />
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Keyboard hint overlay */}
-      <div className="world-kb-hints">
-        <span><kbd>I</kbd> inspect</span>
-        <span><kbd>T</kbd> talk</span>
-        <span><kbd>E</kbd> read</span>
-        <span><kbd>R</kbd> reflect</span>
-        <span><kbd>/</kbd> focus</span>
+      {/* HUD Keyboard Overlays */}
+      <div className="world-kb-hints-hud">
+        <div className="kb-hint-item">
+          <span className="kb-key">I</span>
+          <span className="kb-label">INSPECT</span>
+        </div>
+        <div className="kb-hint-item">
+          <span className="kb-key">T</span>
+          <span className="kb-label">COMMUNICATE</span>
+        </div>
+        <div className="kb-hint-item">
+          <span className="kb-key">E</span>
+          <span className="kb-label">EXECUTE_READ</span>
+        </div>
+        <div className="kb-hint-item">
+          <span className="kb-key">R</span>
+          <span className="kb-label">REFLECT_MEMORY</span>
+        </div>
       </div>
     </div>
   );
