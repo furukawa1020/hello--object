@@ -19,8 +19,8 @@ module Engine
         # Initialize container if needed
         obj.initialize_container if obj.respond_to?(:initialize_container)
         
-        @world.add_object(obj)
-        obj.set_scene(@world.current_scene_id)
+        @world.add_object(obj) if obj
+        obj.set_scene(@world.current_scene_id) if obj
         obj
       rescue NameError => e
         Rails.logger.error "Failed to find class #{klass}: #{e.message}"
