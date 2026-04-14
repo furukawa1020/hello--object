@@ -1,6 +1,6 @@
 module Engine
   class Navi
-    DEFAULT_MESSAGE = "支配的な静寂… オブジェクトを選択し、その本質を探究しなさい。"
+    DEFAULT_MESSAGE = "システム稼働中… オブジェクトを選択し、その構造を記述しなさい。"
 
     def self.generate_message(world, last_result = nil, last_error = nil, selected_object = nil)
       # Priority 1: Errors
