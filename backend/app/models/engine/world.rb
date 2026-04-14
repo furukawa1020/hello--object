@@ -20,20 +20,20 @@ module Engine
       [
         {
           id: 'intro',
-          title: '真理への階梯へようこそ',
-          content: 'ここは Ruby が支配する「実体化された世界」です。目の前のオブジェクトは、すべて Ruby のクラスから生成されています。',
+          title: 'Ruby Interactive World へようこそ',
+          content: 'ここは Ruby によって「実体化（インスタンス化）」されたプログラムの世界です。目の前のオブジェクトは、すべて設計図（クラス）に基づいています。',
           target: '.world-view'
         },
         {
           id: 'interact',
-          title: 'オブジェクトとの対話',
-          content: 'オブジェクトを選択して Actions ボタンを押すか、直接コードを書き込むことで世界に干渉できます。',
+          title: 'オブジェクトの観測',
+          content: 'オブジェクトを選択すると、その内部状態（プロパティ）や可能な操作（メソッド）を Actions パネルで確認できます。',
           target: '.object-detail'
         },
         {
           id: 'ruby',
-          title: 'Ruby の力',
-          content: '魔法の源は Ruby そのものです。`door.open` と唱えれば道が開けるでしょう。呪われたオブジェクトはクラスごと書き換えてください。',
+          title: 'Ruby コードの実行',
+          content: 'Magic Note にコードを記述し、世界を動かしましょう。`door.open` といった命令が基本です。呪われたオブジェクトは、クラス定義そのものを書き換えて解錠してください。',
           target: '.editor-section'
         }
       ]
