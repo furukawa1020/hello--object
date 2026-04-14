@@ -1,24 +1,25 @@
 class CoreMainframe < GameObject
-  def initialize(id, name: '中枢メインフレーム', description: '厳重なセキュリティで保護されたシステムコア。認証用オブジェクトは auth_001 から auth_050 までの50個のメソッドに全て true で応答しなければならない。')
-    super(id, name: name, description: description)
+  def initialize(id:, name: '中枢メインフレーム', description: 'auth_001 から auth_050 までの50個のメソッドに全て true で応答するオブジェクトが必要。method_missing を使え。')
+    super(id: id, name: name, description: description)
     @variables[:hacked] = false
   end
 
   def unlock_with(key_object)
     if key_object.nil?
-      raise "認証に使用するオブジェクト（鍵）を指定してください。"
+      raise "認証に使用するオブジェクト（鍵）を指定してください。 例: #{id}.unlock_with(key)"
     end
 
     (1..50).each do |i|
       method_name = "auth_#{format('%03d', i)}".to_sym
-      
+
       unless key_object.respond_to?(method_name)
         engine.record_event('error', "認証失敗: メソッド #{method_name} が見つかりません。", object_id: id, color: '#ff4444')
-        return "アクセス拒否: キーオブジェクトは #{method_name} を持っていません。"
+        return "アクセス拒否: キーオブジェクトは #{method_name} に応答できません。"
       end
 
-      unless key_object.send(method_name) == true
-        engine.record_event('error', "認証失敗: #{method_name} が true を返しませんでした。", object_id: id, color: '#ff4444')
+      result = key_object.send(method_name)
+      unless result == true
+        engine.record_event('error', "認証失敗: #{method_name} が true を返しませんでした（got: #{result.inspect}）。", object_id: id, color: '#ff4444')
         return "アクセス拒否: #{method_name} の戻り値が不正です。"
       end
     end
@@ -38,10 +39,21 @@ class CoreMainframe < GameObject
       },
       labels: [
         { icon: '💻', text: 'Mainframe', level: 5 },
-        { icon: '🔒', text: @variables[:hacked] ? 'Hacked' : 'Secure', level: @variables[:hacked] ? 3 : 2 }
+        { icon: '🔒', text: @variables[:hacked] ? 'COMPROMISED' : 'Secure', level: @variables[:hacked] ? 3 : 2 }
       ],
       actions: [
-        { label: 'Attempt Hack', code: "#{id}.unlock_with(key)", disabled: @variables[:hacked] }
+        { label: 'Attempt Hack', code: "#{id}.unlock_with(key_001)", disabled: @variables[:hacked] },
+        { label: 'Hint: method_missing', code: <<~CODE.strip, disabled: false }
+          class Key
+            def method_missing(m, *args)
+              m.to_s.start_with?('auth_') ? true : super
+            end
+            def respond_to_missing?(m, include_private = false)
+              m.to_s.start_with?('auth_') || super
+            end
+          end
+          #{id}.unlock_with(key_001)
+        CODE
       ],
       completed: @variables[:hacked]
     )
@@ -62,8 +74,18 @@ class CoreMainframe < GameObject
           @hacked = true
         end
       end
-      # ヒント: 50個のメソッドを手作業で定義するのは無謀だ。
-      # method_missing と respond_to_missing? を使ってみよう。
+
+      # ヒント: 50個メソッドを手動定義するのは無謀だ！
+      # method_missing と respond_to_missing? を使って
+      # auth_ で始まるメソッドすべてに true を返せ。
+      class Key
+        def method_missing(m, *args)
+          m.to_s.start_with?('auth_') ? true : super
+        end
+        def respond_to_missing?(m, include_private = false)
+          m.to_s.start_with?('auth_') || super
+        end
+      end
     RUBY
   end
 end
