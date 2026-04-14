@@ -12,7 +12,13 @@ class ExecutionController < ApplicationController
       scenes: WorldManager.world.scene_metadata.values,
       is_victory: WorldManager.world.victory?,
       tutorial: WorldManager.world.tutorial_steps,
-      navi_message: Engine::Navi.generate_message(WorldManager.world)
+      navi_message: Engine::Navi.generate_message(WorldManager.world),
+      debug: {
+        object_count: WorldManager.world.objects.size,
+        scene_count: WorldManager.world.scene_metadata.size,
+        current_scene: WorldManager.world.current_scene_id,
+        initialization_status: !!WorldManager.instance_variable_get(:@world)
+      }
     }
   end
 
