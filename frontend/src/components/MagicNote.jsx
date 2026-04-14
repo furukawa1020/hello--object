@@ -127,9 +127,9 @@ const MagicNote = ({ onExecute, selectedObject, initialCode, onSaveToNotebook })
 
   return (
     <div className={`magic-note tactical-panel ${isBlock ? 'is-block-mode' : ''}`}>
-      <div className="note-header">
+      <div className="panel-header">
         <div className="note-title-area">
-          <span className="note-title">✦ Magic Note</span>
+          <span className="label-tech">TACTICAL_REPL_v4</span>
           {analysis && (
             <div className="code-analyzer-badge" style={{ '--badge-color': analysis.color }}>
               {analysis.label}
@@ -146,8 +146,8 @@ const MagicNote = ({ onExecute, selectedObject, initialCode, onSaveToNotebook })
             </button>
           )}
           {input.trim() && onSaveToNotebook && (
-            <button className="save-snippet-btn" onClick={() => onSaveToNotebook(input.trim())}>
-              📓
+            <button className="save-snippet-btn" onClick={() => onSaveToNotebook(input.trim())} title="Record Note">
+              ⎙
             </button>
           )}
         </div>
@@ -171,42 +171,48 @@ const MagicNote = ({ onExecute, selectedObject, initialCode, onSaveToNotebook })
       )}
 
       <div className="editor-wrapper">
-        <div
-          ref={mirrorRef}
-          className="editor-mirror mono"
-          aria-hidden="true"
-          dangerouslySetInnerHTML={{ __html: highlight(input) + '\n' }}
-        />
-        <textarea
-          ref={textareaRef}
-          className="editor-textarea mono"
-          value={input}
-          onChange={e => { setInput(e.target.value); syncScroll(); }}
-          onScroll={syncScroll}
-          onKeyDown={handleKeyDown}
-          placeholder={"例: door.unlock\n\n# クラスを書き換えるには:\nclass Door\n  def unlock\n    @locked = false\n  end\nend"}
-          disabled={isExecuting}
-          spellCheck={false}
-          autoCapitalize="off"
-          autoCorrect="off"
-        />
+        <div className="line-numbers">
+          {input.split('\n').map((_, i) => (
+            <div key={i} className="ln-item">{i + 1}</div>
+          ))}
+        </div>
+        <div className="editor-main">
+          <div
+            ref={mirrorRef}
+            className="editor-mirror mono"
+            aria-hidden="true"
+            dangerouslySetInnerHTML={{ __html: highlight(input) + '\n' }}
+          />
+          <textarea
+            ref={textareaRef}
+            className="editor-textarea mono"
+            value={input}
+            onChange={e => { setInput(e.target.value); syncScroll(); }}
+            onScroll={syncScroll}
+            onKeyDown={handleKeyDown}
+            placeholder={"# Input code or define classes\nclass Door\n  def unlock\n    @locked = false\n  end\nend"}
+            disabled={isExecuting}
+            spellCheck={false}
+            autoCapitalize="off"
+            autoCorrect="off"
+          />
+        </div>
       </div>
 
       <div className="note-footer">
         <div className="keyboard-hints">
-          <kbd>Enter</kbd> 実行
-          <kbd>Shift+↵</kbd> 改行
-          <kbd>Tab</kbd> インデント
-          <kbd>Ctrl+↑</kbd> 履歴
-          <kbd>Ctrl+S</kbd> 保存
+          <span><kbd>↵</kbd> EXECUTE</span>
+          <span><kbd>⇧↵</kbd> NEWLINE</span>
+          <span><kbd>^↑</kbd> HISTORY</span>
         </div>
         <button
           type="button"
-          className={`button-tactical ${isExecuting ? 'loading' : ''}`}
+          className={`execute-switch ${isExecuting ? 'loading' : ''}`}
           onClick={handleSubmit}
           disabled={isExecuting}
         >
-          {isExecuting ? '⟳ 実行中...' : 'Execute ⏎'}
+          <div className="switch-glow" />
+          <span className="label">{isExecuting ? 'PROCESSING...' : 'INITIATE_EXECUTION'}</span>
         </button>
       </div>
     </div>
