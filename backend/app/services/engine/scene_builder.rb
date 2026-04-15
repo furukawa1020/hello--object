@@ -9,7 +9,11 @@ module Engine
       # Ensure the class exists (e.g., Door, Key, Chest)
       begin
         object_class = klass.is_a?(Class) ? klass : Object.const_get(klass.to_s.camelize)
-        obj = object_class.new(id: id, name: name, description: description)
+        obj = begin
+          object_class.new(id: id, name: name, description: description, **vars)
+        rescue ArgumentError
+          object_class.new(id: id, name: name, description: description)
+        end
         
         # Set initial instance variables
         vars.each do |k, v|
