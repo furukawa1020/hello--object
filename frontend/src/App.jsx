@@ -14,6 +14,19 @@ const isVictory = (objects) => {
   return d && d.variables.open === true;
 };
 
+const formatVariableValue = (value) => {
+  if (value === null) return 'null';
+  if (value === undefined) return 'undefined';
+  if (typeof value === 'object') {
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return String(value);
+    }
+  }
+  return String(value);
+};
+
 function App() {
   const [objects, setObjects]               = useState([]);
   const [scenes, setScenes]                 = useState([]);
@@ -349,7 +362,7 @@ function App() {
                     {Object.entries(selectedObject.variables).map(([k, v]) => (
                       <div key={k} className="var-item">
                         <span className="var-key">@{k}</span>
-                        <span className={`var-val ${typeof v}`}>{v.toString()}</span>
+                        <span className={`var-val ${typeof v}`}>{formatVariableValue(v)}</span>
                       </div>
                     ))}
                   </div>
