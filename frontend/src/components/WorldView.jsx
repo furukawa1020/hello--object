@@ -68,7 +68,7 @@ const WorldView = ({ objects, scenes, onSelect, selectedId }) => {
                 <span className="scene-label">{s.label}</span>
                 <div className="scene-status">
                   <div className="status-progress-bar">
-                    <div className="progress-fill" style={{ width: `${(completed/count)*100}%` }} />
+                    <div className="progress-fill" style={{ width: `${count > 0 ? (completed / count) * 100 : 0}%` }} />
                   </div>
                   <span className="scene-tab-count mono">
                     {completed}/{count}
