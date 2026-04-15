@@ -53,7 +53,7 @@ class GameObject
 
   def register!
     Engine::EventRecorder.world.add_object(self)
-    "#{self.class.name} '#{@name}' が具現化されました。"
+    "#{self.class.name} '#{@name}' was registered."
   end
 
   # Default visual representation (moves from JS to Ruby)
@@ -103,7 +103,7 @@ class GameObject
       # Skip standard internals and parent references to avoid cycles
       next if [:@id, :@name, :@description, :@parent, :@notes].include?(var)
       val = instance_variable_get(var)
-      
+
       # Handle collections of objects
       if val.is_a?(Array)
         vars[var.to_s.delete('@')] = val.map { |v| v.is_a?(GameObject) ? v.id : v }
@@ -119,7 +119,7 @@ class GameObject
     if respond_to?(method_name)
       send(method_name, *args)
     else
-      raise NoMethodError, "このオブジェクト（#{@name}）はその言葉（#{method_name}）を知らないようです。"
+      raise NoMethodError, "#{@name} does not respond to #{method_name}"
     end
   end
 
