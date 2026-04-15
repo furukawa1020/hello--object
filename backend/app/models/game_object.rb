@@ -7,6 +7,7 @@ class GameObject
     @description = description
     @notes = []
     @scene_id = nil
+    @variables = {}
   end
 
   def set_scene(scene_id)
@@ -24,6 +25,10 @@ class GameObject
 
   # Returns a hash of instance variables for the frontend
   def state
+    state_hash
+  end
+
+  def state_hash
     {
       id: @id,
       name: @name,
@@ -40,6 +45,10 @@ class GameObject
       tooltip: ui_tooltip,
       completed: completed?
     }
+  end
+
+  def variables
+    @variables
   end
 
   def register!
@@ -78,7 +87,12 @@ class GameObject
 
   # Default schematic
   def ui_schematic
+    return schematic if respond_to?(:schematic)
     nil
+  end
+
+  def engine
+    EngineFacade.new
   end
 
   private
@@ -106,6 +120,18 @@ class GameObject
       send(method_name, *args)
     else
       raise NoMethodError, "このオブジェクト（#{@name}）はその言葉（#{method_name}）を知らないようです。"
+    end
+  end
+
+  class EngineFacade
+    def world
+      Engine::EventRecorder.world
+    end
+
+    def record_event(event_name, message = nil, payload = {})
+      data = payload.dup
+      data[:message] = message if message
+      Engine::EventRecorder.record(event_name, data)
     end
   end
 end
