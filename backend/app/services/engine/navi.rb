@@ -1,23 +1,43 @@
 module Engine
   class Navi
-    DEFAULT_MESSAGE = "システム稼働中… オブジェクトを選択し、その構造を記述しなさい。"
+    DEFAULT_MESSAGE = "SYSTEM_WATCH: オブジェクトを選択し、その本質（class）をハックせよ。"
 
     def self.generate_message(world, last_result = nil, last_error = nil, selected_object = nil)
+      instability = RubyEvaluator.instance_variable_get(:@instability) || 0
+
+      # Priority 0: Critical Instability Warnings
+      return "【警告】現実崩壊(REALITY_COLLAPSE)まで残り 10%。直ちにハックを中止するか、安定化させよ。" if instability > 90
+      return "【注意】不整合波が増大中。インターフェースに異常が発生しています。" if instability > 70
+      return "【微小振動】微細なグリッチを検知。コードの純度を高めなさい。" if instability > 40
+
       # Priority 1: Errors
       if last_error
-        return "その呪縛（呪い）は通常の干渉を拒絶しています。クラスの定義そのものを書き換え、因果をねじ曲げなさい。" if last_error.include?("呪") || last_error.include?("cursed")
-        return "存在しないメソッドを呼ぼうとしています。Actions パネルを参考に、正しい命令を与えてください。" if last_error.include?("NoMethodError")
-        return "論理に乱れがあります。提供されたコードの構文を確認しなさい。" if last_error.include?("SyntaxError")
-        return "エラーが発生しました: #{last_error.split(':').last.strip}"
+        case last_error
+        when /呪/, /cursed/
+          return "【解析結果】その死滅関数（呪い）は通常層では解除不能。class 定義を直接書き換え、因果を再構築せよ。"
+        when /NoMethodError/
+          return "【無効命令】存在しないメソッドです。対象の schematic（設計図）を読み解き、真実を記述せよ。"
+        when /SyntaxError/
+          return "【構文エラー】論理構造が破綻しています。セミコロンや括弧の整合性を確認せよ。"
+        else
+          return "【例外検知】#{last_error.split(':').last.strip}。begin..rescue で捕捉可能か？"
+        end
       end
 
-      # Priority 2: Selected Object context
-      if selected_object
-        return generate_object_advice(selected_object)
+      # Priority 2: World Objectives Advice
+      current_scene = world.scene_metadata[world.current_scene_id.to_s]
+      if current_scene && current_scene[:objectives]
+        pending = current_scene[:objectives].find { |obj| !world.find_object(obj[:target])?.instance_variable_get(:@variables)[:completed] }
+        return "【現優先目標】#{pending[:text]}。#{pending[:target]} を観測せよ。" if pending
       end
 
-      # Priority 3: World events or progression
-      return generate_progression_advice(world)
+      # Priority 3: Selected Object context
+      return generate_object_advice(selected_object) if selected_object
+
+      # Priority 4: Victory
+      return "【最終警告】真理の門が開いた。帰還の準備は整ったか。" if world.victory?
+      
+      DEFAULT_MESSAGE
     end
 
     private
@@ -25,32 +45,21 @@ module Engine
     def self.generate_object_advice(obj)
       case obj.class.name
       when 'Door'
-        return "古き扉に鍵がかかっています。`door.unlock` を試すか、呪われている場合はその定義を破壊しなさい。" if obj.instance_variable_get(:@locked)
-        "扉が開かれようとしています。`door.open` と唱えなさい。"
-      when 'Chest'
-        return "堅牢なチェストです。中身を得るには適切な鍵が必要です。" if obj.instance_variable_get(:@locked)
-        "中身はあなたの手の中にあります。"
-      when 'Tome'
-        return "知識の集積体です。`tome.read` で世界の法則を学びなさい。" unless obj.instance_variable_get(:@read)
-        "その古文書からは、すでに全ての英知を吸収しました。"
-      when 'Npc'
-        "高位の存在です。`talk` で対話し、`ask` で特定のトピックについて質問が可能です。"
-      when 'Mirror'
-        "反映の鏡です。`mirror.reflect(object)` で他者の構造を写し出すことができます。"
-      when 'Pedestal'
-        "捧げ物の台座です。`place(item)` で儀式を行い、封印を解きなさい。"
-      when 'WorldGate'
-        "次元の門です。整合性が保たれていれば、認証の末に道が開けるでしょう。"
-      when 'Glitch'
-        "システムの不整合です。通常の手段では干渉できません。メタプログラミングによる動的な修正が必要です。"
+        obj.instance_variable_get(:@variables)[:locked] ? "【観測】閉鎖回路。unlock を定義、または呪いを排除せよ。" : "【観測】解放準備。open のトリガーを待機中。"
+      when 'WeightPlate'
+        "【観測】質量センサー。十分な weight を持つインスタンスを put() せよ。"
+      when 'UnbreakableSafe'
+        "【観測】絶対金庫。既存クラス(UnbreakableSafe)の再オープン、および unlock メソッドのオーバーライドが必要。"
+      when 'GolemGatekeeper'
+        "【観測】ダックタイピング門番。対象に dance メソッドを「実装」し、present() せよ。"
+      when 'ForbiddenTome'
+        "【警告】精神破壊パケット。begin..rescue 以外での接触は推奨されない。"
+      when 'CoreMainframe'
+        "【観測】中枢メインフレーム。method_missing による動的メソッド生成が攻略の鍵となる。"
       else
-        "#{obj.name} を観測しています。その内部変数（@variables）に変化を与えなさい。"
+        "【解析】#{obj.name} (# {obj.class.name})。その instance_variables を変化させ、世界の整合性を保て。"
       end
-    end
-
-    def self.generate_progression_advice(world)
-      return "全ての試練を乗り越え、真理の門を開く時が来ました。" if world.victory?
-      DEFAULT_MESSAGE
     end
   end
 end
+
