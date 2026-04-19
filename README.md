@@ -1,4 +1,4 @@
-# hello, object 💎
+# hello, object ！！💎
 
 An interactive browser-based puzzle game for learning Ruby object-oriented programming concepts. Players write real Ruby code in a built-in editor to interact with in-game objects and solve puzzles to progress through the world.
 
