@@ -14,6 +14,10 @@ class WorldManager
     'mirror_reflected'   => { icon: '🔮', text: '鏡が反射した',   color: '#c8a0ff' },
     'pedestal_activated' => { icon: '⚡', text: '台座が起動した！', color: '#ffcc44' },
     'object_revealed'    => { icon: '✨', text: '新たなオブジェクトが現れた！', color: '#ff79c6' },
+    'glitch_minor'       => { icon: '〰️', text: '界面のゆらぎ', color: '#ffec3d' },
+    'glitch_major'       => { icon: '🌫️', text: '現実の剥離', color: '#ff4d4f' },
+    'glitch_error'       => { icon: '⚡', text: '整合性エラー', color: '#cf1322' },
+    'system_reset'       => { icon: '☢️', text: '現実再起動', color: '#f5222d' },
   }.freeze
 
   def self.initialize_world(target_world = nil)
@@ -23,142 +27,78 @@ class WorldManager
     Engine::EventRecorder.world = @world
 
     # ═══════════════════════════════════════════════════
-    # Scene 1: The First Room — 入門
+    # Scene 1: Entry Point — THE BOOT SEQUENCE
     # ═══════════════════════════════════════════════════
-    @world.define_scene :the_first_room, label: 'Entry Point', description: '入門用のコード空間。オブジェクトの基本操作を理解するための場所。'
-    @world.define_scene :the_sealed_chamber, label: 'Encrypted Chamber', description: 'アクセス制限がかかった空間。クラス定義の上書き（モンキーパッチ）が必要。'
-    @world.define_scene :the_archive, label: 'The Library', description: 'Rubyのコアコンセプトやマニュアルが格納されたデータ領域。'
-    @world.define_scene :the_departure, label: 'Final Terminal', description: '次のフェーズへの出口。整合性の検証が求められる。'
+    @world.define_scene :the_first_room, 
+      label: 'ACCESS_TERMINAL', 
+      description: '初期化されたデータ空間。現実の整合性を確認せよ。',
+      objectives: [
+        { id: 'obj_open_door', text: '基本アクセス扉を解放せよ', target: 'door_001' },
+        { id: 'obj_activate_plate', text: '古代感圧板に100以上の質量を検知させよ', target: 'plate_001' },
+        { id: 'obj_pass_gate', text: '第一防壁を突破せよ', target: 'hgate_001' }
+      ]
+    
+    @world.define_scene :the_sealed_chamber, 
+      label: 'CRYPTO_CHAMBER', 
+      description: '高度にカプセル化された領域。クラス定義の改変が求められる。',
+      objectives: [
+        { id: 'obj_safe_hack', text: '絶対金庫をモンキーパッチで解錠せよ', target: 'safe_001' },
+        { id: 'obj_golem_dance', text: 'ゴーレムに特異メソッドを読み込ませて満足させよ', target: 'golem_001' }
+      ]
+
+    @world.define_scene :the_archive, 
+      label: 'DATA_ARCHIVE', 
+      description: '禁忌の知識が蓄積された領域。例外処理(rescue)を使いこなせ。',
+      objectives: [
+        { id: 'obj_tome_rescue', text: '禁断の魔導書から例外を捕捉して知識を抽出せよ', target: 'tome_forbidden' }
+      ]
+
+    @world.define_scene :the_departure, 
+      label: 'CORE_MAINFRAME', 
+      description: 'システムの心臓部。メタプログラミングの真髄を見せよ。',
+      objectives: [
+        { id: 'obj_mainframe_hack', text: 'メインフレームの50重認証を自動突破せよ', target: 'mainframe_001' },
+        { id: 'obj_victory', text: '真理の門を解放して帰還せよ', target: 'gate_exit' }
+      ]
 
     @world.scene :the_first_room do
       door :door_001, 'アクセス扉',
-           'システム内の先へ進むための基本オブジェクト。引数なしの `open` メソッドで開くことが可能。',
+           '設計図(class Door)から生成された最初のインスタンス。`open`を呼べ。',
            locked: true, open: false
 
-      k = key :key_001, '黄金の鍵', '眩い光を放つ古い鍵。チェストの錠前に合いそうだ。'
-      c = chest :chest_001, '鉄のチェスト', '重厚な鉄で作られたチェスト。イニシャルが刻まれている。'
+      k = key :key_001, 'セッション・キー', '眩い光を放つ古い鍵。重さは 150 ある。'
+      c = chest :chest_001, 'データ・チェスト', 'オブジェクトが格納されたバッファ領域。'
       c.add_item(k)
 
       tome :tome_001, '古文書「世界の法則」',
-           'ほこりをかぶった羊皮紙の束。「すべてのオブジェクトはクラスのインスタンスである」と書かれている。'
-
-      npc :sage_001, '石像の賢者',
-          '台座に腰かける老人の石像。しかし、目が光っている気がする。'
-
-      object :mirror, :mirror_001, '知識の鏡',
-             '磨き上げられた鏡。`mirror.reflect(オブジェクト)` で対象の本質を映し出す。'
+           'ほこりをかぶった羊皮紙の束。「すべてのオブジェクトはクラスのインスタンスである」'
 
       weight_plate :plate_001, '古代の感圧板', '重さ100以上のオブジェクトを乗せると起動する。'
-      heavy_gate :hgate_001, '第一防壁', '感圧板と連動している鋼鉄の門。', plate_id: :plate_001
+      heavy_gate :hgate_001, '第一防壁', '感圧板と連動している。`hgate.open`で突破せよ。', plate_id: :plate_001
     end
 
-    # ═══════════════════════════════════════════════════
-    # Scene 2: The Sealed Chamber — 呪いとメタプログラミング
-    # ═══════════════════════════════════════════════════
     @world.scene :the_sealed_chamber do
-      door :cursed_door, '呪印の扉',
-           '禍々しいオーラを放つ扉。刻まれた呪印が、あらゆる鍵を拒絶する。',
-           locked: true, cursed: true
-
-      tome :tome_002, '禁断の書',
-           '焦げた表紙の本。ページには「class Door を再オープンし、呪いを書き換えよ」とある。'
-
-      npc :warlock_001, '術師の亡霊',
-          'かつてこの扉に呪いをかけた術師の残留思念。',
-          lines: [
-            "ふふ…その扉は永遠に開かぬ。",
-            "…あら、あなたはコードを書けるのか。",
-            "Rubyでは class は常に再オープンできる。それが呪いの抜け穴だ。",
-            "`class Door; def unlock; @cursed=false; @locked=false; end; end` を試してみるがいい。",
-            "呪いを解いた後、`cursed_door.unlock` → `cursed_door.open` の順で唱えよ。"
-          ]
-
-      # Pedestal reveals the 'tome_sealed' (secret guide) when activated with key
-      object :pedestal, :pedestal_001, '試練の台座',
-             '台座に刻まれた文字：「正しき鍵を捧げよ。さすれば知恵が授けられん。」',
-             accepts: 'Key', reveals: 'tome_sealed',
-             reward_message: '黄金の鍵を台座に捧げた。光が部屋を満たす…'
-
-      unbreakable_safe :safe_001, '絶対金庫', '絶対に開かない金庫。ソースコード(class UnbreakableSafe)自体を書き換える(モンキーパッチ)必要がある。'
-      golem_gatekeeper :golem_001, '門番ゴーレム', '「dance」メソッドを持つオブジェクトしか通さない。ダックタイピング（特異メソッド）の試練。'
+      door :cursed_door, '呪印の扉', '禍々しいオーラを放つ扉。あらゆる鍵を拒絶する。', locked: true, cursed: true
+      unbreakable_safe :safe_001, '絶対金庫', '絶対に開かない。ソースコード(class UnbreakableSafe)をREPLから書き換えろ。'
+      golem_gatekeeper :golem_001, '門番ゴーレム', '「dance」メソッドを持つ「何か」を提示(present)せよ。'
     end
 
-    # ═══════════════════════════════════════════════════
-    # Hidden objects — revealed by puzzle chains
-    # ═══════════════════════════════════════════════════
-    secret_tome = Tome.new(
-      id: 'tome_sealed',
-      name: '封印されていた書',
-      description: '台座の光が解き放った秘密の書。クリアへの手順が完全に記されている。'
-    )
-    # Override knowledge_lines for specific content
-    secret_tome.instance_variable_set(:@knowledge, [
-      "【手順1】`class Door` を再オープンして `unlock` を書き換える",
-      "【手順2】`cursed_door.unlock` で鍵を解除する",
-      "【手順3】`cursed_door.open` で扉を開ける",
-      "コード例：class Door; def unlock; @cursed=false; @locked=false; '解呪完了'; end; end"
-    ])
-    @world.hide_object(secret_tome)
-
-    # ═══════════════════════════════════════════════════
-    # Scene 3: The Archive — 深い知識（第三の間）
-    # ═══════════════════════════════════════════════════
     @world.scene :the_archive do
-      tome :tome_003, '「継承」の書',
-           'クラスの家系図について。`Door.ancestors` を試してみよ。'
-
-      tome :tome_004, '「状態」の記録',
-           '`@` で始まる変数はインスタンス変数。`door.instance_variables` で一覧を見よ。'
-
-      tome :tome_005, '「動的性」の証',
-           'Rubyは実行中に自らを書き換える。これをモンキーパッチという。class を再オープンすれば実証できる。'
-
-      object :mirror, :mirror_002, '記録の鏡',
-             '世界の真実を映す鏡。`mirror_002.reflect(任意のオブジェクト)` で詳細を調べられる。'
-
-      npc :librarian_001, '図書館の守護者',
-          '古い書物に囲まれた沈黙の番人。',
-          lines: [
-            "ここは知識の間です。書籍に記された真理があなたを導くでしょう。",
-            "tome_003.read → tome_004.read → tome_005.read の順に読むことをお勧めします。",
-            "`1.class` → Integer。`Integer.superclass` → Numeric。これが継承の連鎖です。",
-            "`Door.instance_methods(false)` で Door 独自のメソッド一覧を見られます。",
-            "すべての Ruby クラスは BasicObject から始まります。`Door.ancestors` を試してみてください。"
-          ]
-
-      forbidden_tome :tome_forbidden, '禁断の魔導書', 'そのまま読むと例外(エラー)が発生する。begin..rescue で中身を安全に取り出せ。'
+      tome :tome_003, '「継承」の書', 'クラスの家系図について。`Door.ancestors` を試せ。'
+      tome :tome_005, '「動的性」の証', 'Rubyは実行中に自らを書き換える。これをモンキーパッチという。'
+      forbidden_tome :tome_forbidden, '禁断の魔導書', 'そのまま読むと例外が発生する。begin..rescue で安全に読め。'
     end
 
-    # ═══════════════════════════════════════════════════
-    # Scene 4: The Departure — 脱出口
-    # ═══════════════════════════════════════════════════
     @world.scene :the_departure do
-      world_gate :gate_exit, '真理の門',
-                 '世界の終わりを示す巨大な門。これを抜ければ、あなたは真のRubyistとなる。'
+      world_gate :gate_exit, '真理の門', '世界の終わりを示す門。これを抜ければあなたは真のRubyistだ。'
+      glitch :glitch_001, 'ノイズの塊', '実体のないバグの集積。`glitch.neutralize!`を定義して無効化せよ。'
+      core_mainframe :mainframe_001, '中枢メインフレーム', '50個のauthメソッドを要求する。method_missing を使え。'
 
-      glitch :glitch_001, 'ノイズの塊',
-             '実体のないバグの集積。世界の整合性を乱し、門の開放を阻害している。'
-
-      npc :gatekeeper_001, '門番のホログラム',
-          '実体のない青白い光。アクセス権限を監視している。',
+      npc :gatekeeper_001, '門番のホログラム', 'アクセス権限を監視している。',
           branches: {
-            'start' => {
-              lines: ["…権限なき者の通行は認められません。"],
-              auto_next: 'intro'
-            },
-            'intro' => {
-              lines: ["あなたは門を開きたいのですか？ `respond('yes')` と答えなさい。"],
-            },
-              'yes' => {
-              lines: [
-                "ならば「ADMIN_ACCESS」という鍵を authority メソッドに渡しなさい。",
-                "しかし…あの「ノイズの塊」がシステムを汚染している限り、門は反応しません。",
-                "まずは `glitch` の特異クラス（singleton_class）を書き換え、`neutralize!` を定義しなさい。"
-              ],
-            }
+            'start' => { lines: ["…権限なき者の通行は認められません。"], auto_next: 'intro' },
+            'intro' => { lines: ["門を開きたいなら、システムを安定させ、メインフレームを制圧しなさい。"], },
           }
-      
-      core_mainframe :mainframe_001, '中枢メインフレーム', 'auth_001 から auth_050 までの認証メソッドを要求する。method_missing を使え。'
     end
   end
 
