@@ -5,16 +5,47 @@ class RubyEvaluator
     begin
       Engine::EventRecorder.start_session
       
-      # Detect metaprogramming attempts
-      is_metaprog = code.include?('class ') || code.include?('define_method') || code.include?('instance_eval')
-      @instability += 5 if is_metaprog
-      @instability = [@instability - 1, 0].max if !is_metaprog && @instability > 0
+      # Metaprogramming Detection & High Risk Cost
+      is_metaprog = code.match?(/class\s+|def\s+.*\.|\bdefine_method\b|\binstance_eval\b|\bmodule_eval\b/)
+      
+      if is_metaprog
+        @instability += 15
+        Engine::EventRecorder.record('glitch_minor', { text: 'REALITY_SKEW_DETECTED: Metaprogramming wave detected.' })
+      else
+        # Natural decay on clean executions
+        @instability = [@instability - 1, 0].max if @instability > 0
+      end
+
+      # High Instability Hazards
+      if @instability >= 100
+        @instability = 0
+        WorldManager.reset
+        return {
+          success: false,
+          error: "FATAL: REALITY_COLLAPSE. System could not sustain the instability. Reality has been hard-reset to the last stable state.",
+          instability: 0,
+          objects: WorldManager.all_objects.map(&:state),
+          events: [{ name: 'system_reset', meta: { icon: '☢️', text: 'REALITY_HARD_RESET', color: '#ff0000' } }]
+        }
+      end
+
+      # Threshold Glitch Injection
+      if @instability > 60
+        Engine::EventRecorder.record('glitch_major', { text: 'WARNING: Interface coherence dropping.' }) if rand < 0.3
+      elsif @instability > 30
+        Engine::EventRecorder.record('glitch_minor', { text: 'System jitter detected.' }) if rand < 0.2
+      end
 
       context = EvalContext.new(WorldManager.registry)
       result = context.instance_eval(code)
 
       events = Engine::EventRecorder.collect
       achievements = Engine::AchievementManager.analyze_execution(code, context)
+
+      # Specific Stabilization Command Support
+      if code.strip == 'system.stabilize!'
+        @instability = [@instability - 30, 0].max
+      end
 
       {
         success: true,
@@ -30,13 +61,17 @@ class RubyEvaluator
         instability: @instability,
         is_victory: WorldManager.world.victory?,
         tutorial: WorldManager.world.tutorial_steps,
-        navi_message: Engine::Navi.generate_message(WorldManager.world, @last_result, @last_error)
+        navi_message: Engine::Navi.generate_message(WorldManager.world, result, nil)
       }
     rescue StandardError, ScriptError => e
-      @instability += 2
+      @instability += 5 # Errors are now more punishing
       @last_result = nil
       @last_error = e
       achievements = Engine::AchievementManager.analyze_execution(code, nil)
+      
+      # Trigger extra glitch on errors if unstable
+      Engine::EventRecorder.record('glitch_error', { text: "CRYSTAL_FRACTURE: #{e.class}" }) if @instability > 40
+
       friendly_msg = case e
                     # ...
                     when NoMethodError
