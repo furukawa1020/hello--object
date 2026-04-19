@@ -39,8 +39,13 @@ module Engine
       ]
     end
 
-    def define_scene(id, label:, description:)
-      @scene_metadata[id.to_s] = { id: id.to_s, label: label, description: description }
+    def define_scene(id, label:, description:, objectives: [])
+      @scene_metadata[id.to_s] = { 
+        id: id.to_s, 
+        label: label, 
+        description: description,
+        objectives: objectives
+      }
     end
 
     def add_object(obj)
