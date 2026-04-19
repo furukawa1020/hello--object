@@ -281,6 +281,19 @@ function App() {
         </div>
         
         <div className="header-actions">
+          <div className="system-stability-meter">
+            <span className="meter-label">SYSTEM_INTEGRITY</span>
+            <div className="meter-track">
+              <div 
+                className="meter-fill" 
+                style={{ 
+                  width: `${100 - instability}%`,
+                  backgroundColor: instability > 80 ? '#ff0000' : instability > 50 ? '#ffcc00' : '#3aff8a'
+                }}
+              ></div>
+            </div>
+            <span className="meter-value mono">{100 - instability}%</span>
+          </div>
           <div className="system-stats-hud">
             [ EXECUTIONS: <span className="mono">{stats.executions}</span> ]
             [ EVENTS: <span className="mono">{allEvents.length}</span> ]
@@ -299,6 +312,28 @@ function App() {
             onSelect={handleSelectObject}
             selectedId={selectedObject?.id}
           />
+          
+          <div className="tactical-panel mission-hud animate-in">
+            <div className="panel-header">
+              <span className="label-tech">MISSION_CONTROL</span>
+              <span className="panel-hint">REALTIME_OBJECTIVES</span>
+            </div>
+            <div className="mission-list">
+              {scenes.find(s => objects.some(o => o.scene_id === s.id))?.objectives?.map((obj, i) => {
+                const isCompleted = objects.find(o => o.id === obj.target)?.completed;
+                return (
+                  <div key={i} className={`mission-item ${isCompleted ? 'is-completed' : ''}`}>
+                    <span className="m-status">{isCompleted ? '✔' : '□'}</span>
+                    <span className="m-text">{obj.text}</span>
+                  </div>
+                );
+              })}
+              {(!scenes.find(s => objects.some(o => o.scene_id === s.id))?.objectives) && (
+                <div className="mission-empty">NO_ACTIVE_MISSIONS_DETECTED</div>
+              )}
+            </div>
+          </div>
+
           <div className="tactical-panel editor-hud">
             <div className="panel-header">
               <span className="label-tech">MAGIC_NOTE v4.0</span>
